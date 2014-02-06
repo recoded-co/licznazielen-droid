@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Licz na zieleń</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>   
+    <string name="signin_quit">Zamykanie aplikacji</string>
+    <string name="signin_really_quit">Czy zamknąć aplikacje?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="error_connection">No internet connection</string>
+    <string name="error_server">Ooops.. something went wrong</string>
+    <string name="wait_loacal">Trwa lokalizowanie...</string>
+    
+</resources>
