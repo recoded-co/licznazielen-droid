@@ -72,6 +72,9 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 		
 	    map.getUiSettings().setCompassEnabled(true);
 	    
+	    
+	    hasError = it.hasExtra("hasError");
+	    
 	    myPosition = new LatLng(it.getDoubleExtra("Latitude", 16.5603), it.getDoubleExtra("Longitude",52.2430));
 	    
 	    CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
@@ -85,7 +88,7 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	
 	private double calcDistanceFromMyPosition(LatLng marker)
 	{
-		Location locationA = new Location("location A"); 
+		/*Location locationA = new Location("location A"); 
 		
 		locationA.setLatitude(myPosition.latitude);  
 		locationA.setLongitude(myPosition.longitude);  
@@ -93,9 +96,15 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 		Location locationB = new Location("location B");  
 
 		locationB.setLatitude(marker.latitude);  
-		locationB.setLongitude(marker.longitude);;  
+		locationB.setLongitude(marker.longitude); 
 
 		return  locationA.distanceTo(locationB);
+		
+		*/
+		 float[] result = new float[1];
+		 Location.distanceBetween (myPosition.latitude,myPosition.longitude,marker.latitude, marker.longitude,  result);
+		 return (double)result[0]/1000;
+		
 	}
 
 	@Override
@@ -138,7 +147,7 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	@UiThread
 	 public void addMarkerToMap(PleaceObject po,int i)
 	 {
-		 Log.v("duda",po.getName());
+		 
 		 
 		 LatLng position = new LatLng(po.getLatitude(), po.getLongitude());
 		 
@@ -150,7 +159,9 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	            .icon(BitmapDescriptorFactory.fromResource(markersColor[i]))
             );
 		 
-		 po.setDistance(calcDistanceFromMyPosition(position));		 
+		 if(!hasError)
+			 po.setDistance(calcDistanceFromMyPosition(position));
+		 
 	 }
 	
 	@UiThread
