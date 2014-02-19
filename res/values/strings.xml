@@ -11,5 +11,9 @@
     <string name="error_connection">No internet connection</string>
     <string name="error_server">Ooops.. something went wrong</string>
     <string name="wait_loacal">Trwa lokalizowanie...</string>
+    <string name="closeapp">Zamknij aplikacje</string>
+    <string name="about">O projekcie</string>
+    <string name="satelate">Widok satelitarny</string>
+    <string name="favorite">Ulubione</string>
     
 </resources>

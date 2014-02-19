@@ -2,7 +2,9 @@ package it.katalpa.licz_na_zilelen.model;
 
 import org.json.JSONObject;
 
-public class PleaceObject {
+import com.google.android.gms.maps.model.Marker;
+
+public class PleaceObject implements Comparable<PleaceObject> {
 
 	private String sName;
 	private int iFavorite;
@@ -11,7 +13,7 @@ public class PleaceObject {
 	private int iPopularity;
 	private double dLatitude;
 	private double dLongitude;
-	
+	Marker marker;
 	
 	public PleaceObject(String sPhone,String sName)
 	{
@@ -53,6 +55,15 @@ public class PleaceObject {
 	        	return obj;
 	    }
 	
+	public void setMarker(Marker m)
+	{
+		marker = m;
+	}
+	
+	public Marker getMarker()
+	{
+		return marker;
+	}
 	
 	public String getName() {			
 		return sName;			
@@ -110,6 +121,16 @@ public class PleaceObject {
 	public void setPopularity(int pop) {	
 		iPopularity = pop;
     }
+
+	@Override
+	public int compareTo(PleaceObject another) {
+		if(this.getDistance()==another.getDistance())
+			return 0;
+		else if(this.getDistance()<another.getDistance())
+			return -1;
+		else
+			return 1;
+	}
     
 	/*
 		
