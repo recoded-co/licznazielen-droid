@@ -439,17 +439,17 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	 void share()
 	 {
 		
-		/*Intent intent = new Intent(Intent.ACTION_SEND);
+		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("text/plain");
 		intent.putExtra(Intent.EXTRA_TEXT, "http://licznazielen.pl");
-		startActivity(Intent.createChooser(intent, "Udostêpnij"));*/
-		
+		startActivity(Intent.createChooser(intent, "Udostêpnij"));
+		/*
 		PleaceObject obj = new PleaceObject();		
 		
 		obj.setLatitude(map.getCameraPosition().target.latitude);
 		obj.setLongitude(map.getCameraPosition().target.longitude);		
 		
-		addObject(obj);		
+		addObject(obj);	*/	
 		
 	}
 	
