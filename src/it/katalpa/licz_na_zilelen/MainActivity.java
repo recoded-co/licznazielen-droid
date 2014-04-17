@@ -762,6 +762,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
             	 
                  if(isFavView)
                  {*/
+            	 	favObjects = webApi.getFavoriteObject(getApplicationContext());
                 	 mMenuDialog.cancel();
                 	 if(!favObjects.isEmpty())
                 		 ShowNearDialog(favObjects);
