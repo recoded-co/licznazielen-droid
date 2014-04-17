@@ -1,9 +1,16 @@
 package it.katalpa.licz_na_zilelen.helper;
-
+/**
+*
+* @coded by katalpa.it
+*/
 import it.katalpa.licz_na_zilelen.model.PleaceObject;
+import it.katalpa.licz_na_zilelen.model.PleaceObject.ComentsMap;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,7 +28,10 @@ public class FavoriteDataSource {
 			  DatabaseHelper.COLUMN_FAV_NAME,
 			  DatabaseHelper.COLUMN_FAV_LATITUDE,
 			  DatabaseHelper.COLUMN_FAV_LONGITUDE,
-			  DatabaseHelper.COLUMN_FAV_POPULARITY
+			  DatabaseHelper.COLUMN_FAV_POPULARITY,
+			  DatabaseHelper.COLUMN_FAV_MYOBJECT,
+			  DatabaseHelper.COLUMN_FAV_ICONS,
+			  DatabaseHelper.COLUMN_FAV_ANSWRWS
 	  };
 
 	  public FavoriteDataSource(Context context) {
@@ -48,8 +58,38 @@ public class FavoriteDataSource {
 	    values.put(DatabaseHelper.COLUMN_FAV_OBJID, obj.getId());
 	    values.put(DatabaseHelper.COLUMN_FAV_LATITUDE,obj.getLatitude());
 	    values.put(DatabaseHelper.COLUMN_FAV_LONGITUDE,obj.getLongitude());
-	    values.put(DatabaseHelper.COLUMN_FAV_POPULARITY,obj.getPopularity());
-	    		
+	    values.put(DatabaseHelper.COLUMN_FAV_POPULARITY,obj.getPopularity());  	
+	    values.put(DatabaseHelper.COLUMN_FAV_MYOBJECT,obj.getMyObject());
+	    	    
+	    String sText = "0";
+	    
+	    for(String s: obj.getIcons())
+	    {
+	    	sText +='|'+s;
+	    }
+	    
+	    values.put(DatabaseHelper.COLUMN_FAV_ICONS,sText);
+	    
+	    
+	    JSONObject jsonObject = new JSONObject();	      
+    	JSONArray array = new JSONArray();
+    	
+    	try
+    	{    	
+	        if(obj.getComments()!=null)
+		        for(ComentsMap nm : obj.getComments())
+		        {
+		        	array.put(new JSONObject().put("name",nm.getKey()).put("value",nm.getValue()));
+		        }    	
+	    	
+	    	jsonObject.put("form_values", array);
+    	
+    	}catch(Exception e){
+    		
+    	}
+        
+    	values.put(DatabaseHelper.COLUMN_FAV_ANSWRWS,jsonObject.toString());
+	        	   	
 	    long insertId = database.insert(DatabaseHelper.TABLE_NAME_FAV, null,
 	        values);
 	    
@@ -92,7 +132,10 @@ public class FavoriteDataSource {
 
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {
-	      objs.add(cursorToPleaceObject(cursor));
+	    	
+	      PleaceObject pleace = cursorToPleaceObject(cursor);
+	      pleace.setFavorite(true);
+	      objs.add(pleace);
 	      cursor.moveToNext();
 	    }
 	   
@@ -107,6 +150,36 @@ public class FavoriteDataSource {
 		  obj.setLatitude(cursor.getDouble(3));
 		  obj.setLongitude(cursor.getDouble(4));
 		  obj.setPopularity(cursor.getInt(5));
+		  obj.setMyObject(cursor.getInt(6)==1);
+		  
+		  String sText = cursor.getString(7);
+		  
+		  String[] aText = sText.split("\\|");
+		  
+		  for(int i = 0 ; i < aText.length ; i++){
+      		obj.aIcons.add(aText[i]);
+      	  }
+		  
+		  obj.aComments = new ArrayList<ComentsMap>();
+		  
+		  try
+		  {
+		  
+			  	JSONObject jsonObject = new JSONObject(cursor.getString(8));
+			  	JSONArray array = jsonObject.getJSONArray("form_values");
+			  	
+			  	for(int i = 0 ; i < array.length() ; i++){
+            		
+            		ComentsMap okl = obj.new ComentsMap(	            				            				
+        					array.getJSONObject(i).getString("name"),
+        					array.getJSONObject(i).getString("value")
+        					);
+            		
+            		obj.aComments.add(okl);
+            	}
+			  	
+		  }catch(Exception e){}
+		  
 		  return obj;
 	  }
 }

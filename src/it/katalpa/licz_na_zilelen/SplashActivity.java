@@ -1,7 +1,12 @@
 package it.katalpa.licz_na_zilelen;
-
+/**
+*
+* @coded by katalpa.it
+*/
+import it.katalpa.licz_na_zilelen.service.WebApiService;
 import roboguice.util.Ln;
 
+import com.google.inject.Inject;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EActivity;
@@ -39,6 +44,9 @@ public class SplashActivity extends Activity implements LocationListener{
 	String provider;
 	LocationManager service;
 	
+	@Inject
+	WebApiService webApi;	
+	
 	@AfterViews
 	void initConf() {
 		
@@ -48,16 +56,16 @@ public class SplashActivity extends Activity implements LocationListener{
 		service = (LocationManager) getSystemService(LOCATION_SERVICE);
 		
 		Criteria criteria = new Criteria();
-		provider = service.getBestProvider(criteria, false);
+		provider = service.getBestProvider(criteria, true);
 	    Location location = service.getLastKnownLocation(provider);		
 		
 		boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
-				
+			/*	
 		if (!enabled) {
 			  Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 			  startActivity(intent);
 		}else{
-					
+			*/		
 			
 			if (location != null) {
 			    onLocationChanged(location);
@@ -66,7 +74,7 @@ public class SplashActivity extends Activity implements LocationListener{
 				runInBackground(false,location);
 			}
 
-		}
+		//}
 		
 		
 	}
@@ -75,6 +83,7 @@ public class SplashActivity extends Activity implements LocationListener{
 		@Override
 	  protected void onResume() {
 	    super.onResume();
+	    isFounded = true;
 	    service.requestLocationUpdates(provider, 400, 1, this);
 	  }
 
@@ -95,13 +104,19 @@ public class SplashActivity extends Activity implements LocationListener{
 	     }	    
 		
 		Intent intent = new Intent(SplashActivity.this, MainActivity_.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		
+		
+		
 		
 		if(isGood && loc!=null)
 		{
 			intent.putExtra("Latitude", loc.getLatitude());
 			intent.putExtra("Longitude", loc.getLongitude());
+			intent.putExtra("prefix", webApi.getPrefix(loc.getLatitude(),loc.getLongitude()));
 		}else{
 			intent.putExtra("hasError", true);
+			intent.putExtra("prefix","");
 		}
 		
 		SplashActivity.this.startActivity(intent);

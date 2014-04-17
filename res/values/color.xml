@@ -2,5 +2,23 @@
 <resources>
     <color name="balckolor">#000000</color>
     <color name="whitecolor">#FFFFFF</color>
-    <color name="transparent">#FFFFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
+    
+    <color name="diss_btn">#d8d8d8</color>
+    <color name="normal_btn">#82ad14</color>
+	<color name="active_btn">#00bfff</color>
+	<color name="splash_text">#003f00</color>
+	<color name="info_text">#555555</color>
+	<color name="head_legend_text">#0b3339</color>
+	<color name="under_head">#9e9ea7</color>
+	<color name="legend_text">#646472</color>
+	<color name="head_popup">#74c1e5</color>
+	<color name="text_popup">#444444</color>
+	<color name="cancel_popup">#696969</color>
+	<color name="line_cancel">#d6d6d6</color>
+	<color name="pressed_obj_result">#f0f0fc</color>
+	<color name="gray_btn">#efefef</color>
+    <color name="gray_text">#64626d</color>
+    <color name="fill_edit">#ececfb</color>
+    <color name="font_color">#545454</color>
 </resources>

@@ -1,15 +1,22 @@
 package it.katalpa.licz_na_zilelen.helper;
-
+/**
+*
+* @coded by katalpa.it
+*/
 import it.katalpa.licz_na_zilelen.R;
 import it.katalpa.licz_na_zilelen.model.PleaceObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -54,8 +61,39 @@ public class NearPleaceObjectListAdapter extends ArrayAdapter<PleaceObject> {
           TextView timeView = (TextView)v.findViewById(R.id.licTextView);
 
           PleaceObject msg = alData.get(position);
-          timeView.setText(msg.getName());
-                      
+          timeView.setText(msg.getName());                  
+          
+          timeView = (TextView)v.findViewById(R.id.licTextView2);
+          timeView.setText(msg.getDistance()+" km");
+          
+          List<String> icons = msg.getIcons();
+          Map<String, Integer> mp = new HashMap<String, Integer>();
+          mp.put("1",R.id.imageView5);
+          mp.put("2",R.id.imageView4);
+          mp.put("3",R.id.imageView3);
+          mp.put("4",R.id.imageView2);
+          mp.put("5",R.id.imageView1);
+          
+          ImageView imgView;
+          
+          if(icons!=null)
+          {
+        	 
+        	  for(int i=1;i<6;i++)
+        	  {
+        		 imgView = (ImageView)v.findViewById(mp.get(""+i));
+            	  
+             	 if(icons.indexOf(""+i)==-1)
+             	 {
+             		 imgView.setVisibility(View.GONE);
+             	 }else{
+             		 imgView.setVisibility(View.VISIBLE);
+             	 }
+        		  
+        	  }        	  
+        	 
+          }
+          
        return v;
 	}
 

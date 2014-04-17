@@ -1,5 +1,8 @@
 package it.katalpa.licz_na_zilelen.helper;
-
+/**
+*
+* @coded by katalpa.it
+*/
 import it.katalpa.licz_na_zilelen.R;
 import it.katalpa.licz_na_zilelen.model.PleaceObject;
 

@@ -1,77 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/DateTimeDialog"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        >
+    android:id="@+id/DateTimeDialog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/transparent" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true" >
 
         <LinearLayout
-            android:id="@+id/ControlButtons"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="3"
-                android:gravity="center"
-                android:text="Menu" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/active_btn"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/CancelMenuDialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:padding="10dp"
+                    android:src="@drawable/menu_ico"
+                    android:text="Button" />
+
+            </LinearLayout>
 
             <Button
-                android:id="@+id/CancelMenuDialog"
-                android:layout_width="0dp"
+                android:id="@+id/buttonFavorite"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-            
+                android:background="@drawable/gray_btn_selector"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="50dp"
+            android:minHeight="48dp"
+                android:text="@string/fav_string" />
+
+            <Button
+                android:id="@+id/buttonSatelite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gray_btn_selector"
+                android:gravity="left|center_vertical"
+                android:drawableRight="@drawable/slider_on"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+            android:minHeight="48dp"
+                android:text="@string/satelate_string" />
+
+            <Button
+                android:id="@+id/buttonAbout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gray_btn_selector"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="20dp"
+            android:minHeight="48dp"
+                android:text="@string/about_string" />
+
+            <Button
+                android:id="@+id/buttonLegend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gray_btn_selector"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="20dp"
+            android:minHeight="48dp"
+                android:text="@string/legend_string" />
+
         </LinearLayout>
+    </RelativeLayout>
 
-        <Button
-            android:id="@+id/buttonSatelite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/buttonFavorite"
-            android:layout_below="@+id/buttonAbout"
-            android:layout_marginTop="30dp"
-            android:text="Statelita" />
-
-        <Button
-            android:id="@+id/buttonFavorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/ControlButtons"
-            android:layout_marginLeft="46dp"
-            android:layout_marginTop="33dp"
-            android:text="Ulobione" />
-
-        <Button
-            android:id="@+id/buttonAbout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/buttonFavorite"
-            android:layout_alignBottom="@+id/buttonFavorite"
-            android:layout_marginLeft="27dp"
-            android:layout_toRightOf="@+id/buttonFavorite"
-            android:text="O projekcie" />
-
-        <Button
-            android:id="@+id/buttonClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/buttonSatelite"
-            android:layout_alignBottom="@+id/buttonSatelite"
-            android:layout_alignLeft="@+id/buttonAbout"
-            android:text="Zamknij" />
-
-        <ListView
-            android:id="@+id/listViewFavorite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/buttonSatelite"
-            android:layout_marginTop="18dp" >
-        </ListView>
-        
 </RelativeLayout>

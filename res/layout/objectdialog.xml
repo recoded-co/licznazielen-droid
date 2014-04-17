@@ -1,36 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/DateTimeDialog"
+    android:id="@+id/DateTimeDialog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        >
+        android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/objectDialogClose"
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="Clozet" />
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </FrameLayout>
 
-        <TextView
-            android:id="@+id/objtextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/objectDialogClose"
-            android:layout_marginTop="32dp"
-            android:text="Czekamy na treść od fundacji" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/whitecolor"
+            android:orientation="vertical"
+            android:paddingTop="10dp" >
 
-        <Button
-            android:id="@+id/buttonAddFav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/objectDialogClose"
-            android:layout_marginBottom="31dp"
-            android:text="Fav" />
-        
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/white_btn_selector"
+                android:paddingBottom="5dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="5dp" >
+
+                <ImageButton
+                    android:id="@+id/buttonAddFav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/white2_btn_selector"
+                    android:padding="10dp"
+                    android:src="@drawable/heart_ico_active" />
+
+                <ImageButton
+                    android:id="@+id/buttonShere"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/buttonAddFav"
+                    android:layout_toLeftOf="@+id/buttonAddFav"
+                    android:background="@drawable/white2_btn_selector"
+                    android:padding="10dp"
+                    android:src="@drawable/share_ico" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/buttonAddFav"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignTop="@+id/buttonShere"
+                    android:layout_toLeftOf="@+id/buttonShere" >
+
+                    <TextView
+                        android:id="@+id/objtextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:gravity="left|bottom"
+                        android:text="Cycadela"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="@dimen/fs_16" />
+
+                    <TextView
+                        android:id="@+id/textViewDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toRightOf="@+id/objtextView"
+                        android:gravity="left|bottom"
+                        android:paddingBottom="1dp"
+                        android:paddingLeft="5dp"
+                        android:text="12,0 km"
+			        	android:singleLine="true"
+			        	android:ellipsize="end"
+			            android:lines="1"
+                        android:textColor="@color/gray_text"
+                        android:textSize="@dimen/fs_12" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+			<ScrollView
+			    android:id="@+id/SCROLLER_ID"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:scrollbars="vertical"
+			    android:fillViewport="true">
+            <TextView
+                android:id="@+id/aboutText"
+                android:layout_width="fill_parent"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1.0"
+                android:padding="20dp"/>
+</ScrollView>
+        </LinearLayout>
+
+    </LinearLayout>
+
 </RelativeLayout>

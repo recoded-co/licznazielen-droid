@@ -1,5 +1,12 @@
 package it.katalpa.licz_na_zilelen.model;
+/**
+*
+* @coded by katalpa.it
+*/
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.android.gms.maps.model.Marker;
@@ -7,21 +14,42 @@ import com.google.android.gms.maps.model.Marker;
 public class PleaceObject implements Comparable<PleaceObject> {
 
 	private String sName;
-	private int iFavorite;
+	private boolean iFavorite = false;
+	private boolean iMyObject = false;
 	private int iId;	
 	private double fDistance;
 	private int iPopularity;
 	private double dLatitude;
 	private double dLongitude;
 	Marker marker;
+	public List<String> aIcons = null;
+	public List<ComentsMap> aComments = null;
 	
-	public PleaceObject(String sPhone,String sName)
-	{
+	 public class ComentsMap{	
+		
+		String key="";
+		String value="";
+		
+		public ComentsMap(String _key,String _value)
+		{
+			key = _key;
+			value = _value;	
+		}
+		
+		public String getValue()
+		{
+			return value;
+		}
+		
+		public String getKey()
+		{
+			return key;
+		}
 		
 	}
 	
 	 public PleaceObject() {
-		
+		 aIcons = new ArrayList<String>();
 	}
 
 	public static PleaceObject createFromJSON(JSONObject jsonObject){
@@ -32,7 +60,7 @@ public class PleaceObject implements Comparable<PleaceObject> {
 	        	try
 	        	{	        	
 	        		obj.setName(jsonObject.getString("name"));
-	        		obj.setFavorite(jsonObject.getInt("favorite"));
+	        		//obj.setFavorite(jsonObject.getInt("favorite"));
 	        		obj.setId(jsonObject.getInt("id"));
 	        		obj.setPopularity(jsonObject.getInt("popularity"));
 	        		
@@ -47,7 +75,30 @@ public class PleaceObject implements Comparable<PleaceObject> {
 	        		
 	        		obj.setLatitude(Double.parseDouble(commatokens[1]));
 	        		obj.setLongitude(Double.parseDouble(commatokens[0]));	        		
+	        			  
+	        		obj.aIcons = new ArrayList<String>();
+	        		
+	        		JSONArray array = jsonObject.getJSONArray("icons");
+	            	
+	            	for(int i = 0 ; i < array.length() ; i++){
+	            		obj.aIcons.add(array.getString(i));
+	            	}
 	        			        		
+	            	obj.aComments = new ArrayList<ComentsMap>();
+	            	
+	            	 array = jsonObject.getJSONArray("comments");
+		            	
+	            	 
+	            	for(int i = 0 ; i < array.length() ; i++){
+	            			            		
+	            		ComentsMap okl = obj.new ComentsMap(	            				            				
+            					array.getJSONObject(i).getString("key"),
+            					array.getJSONObject(i).getString("value")
+            					);
+	            		
+	            		obj.aComments.add(okl);
+	            	}
+	            	
 	        	}catch(Exception e){
 	        		
 	        	}
@@ -65,8 +116,19 @@ public class PleaceObject implements Comparable<PleaceObject> {
 		return marker;
 	}
 	
+	public List<String> getIcons()
+	{
+		return aIcons;
+	}
+	
+	public List<ComentsMap> getComments()
+	{
+		return aComments;
+	}
+	
 	public String getName() {			
-		return sName;			
+		return sName;
+		//return "Park Cycadela";
     }
 	
 	public void setName(String name) {			
@@ -90,13 +152,22 @@ public class PleaceObject implements Comparable<PleaceObject> {
 		dLongitude = lng;			
     }
 	
-	public int getFavorite(){			
+	public boolean getFavorite(){			
 		return iFavorite;			
     }
 	
-    public void setFavorite(int fav) {			
+    public void setFavorite(boolean fav) {			
 		iFavorite = fav;			
     }
+    
+	public boolean getMyObject(){			
+		return false;			
+    }
+	
+    public void setMyObject(boolean fav) {			
+    	iMyObject = fav;			
+    }
+	
 	
     public int getId() {			
 		return iId;			

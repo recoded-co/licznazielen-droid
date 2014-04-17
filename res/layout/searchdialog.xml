@@ -1,37 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/DateTimeDialog"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <LinearLayout
-        android:id="@+id/ControlButtons5"
+    
+      <RelativeLayout
+        android:id="@+id/ControlButtons"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@color/normal_btn" >
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@null"
+            android:paddingRight="3dp"
+            android:src="@drawable/logo_nav" />
+        
+        <ImageButton
+            android:id="@+id/CancelSearchDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/ok_btn_selector"
+            android:padding="10dp"
+            android:src="@drawable/x"
+            android:text="Button" />
+
+        <ImageButton
+            android:id="@+id/searchSearchDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="51dp"
+            android:background="@drawable/ok_btn_selector"
+            android:padding="10dp"
+            android:src="@drawable/search_ico"
+            android:text="Button" />
 
         <EditText
             android:id="@+id/textEditDialog"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="3"
-            android:gravity="center"
-            />
-
-        <Button
-            android:id="@+id/CancelSearchDialog"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Button" />
-    </LinearLayout>
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/searchSearchDialog"
+            android:layout_toRightOf="@+id/imageButton1"
+            android:background="@drawable/search_editbox"
+            android:ems="10"
+        	android:singleLine="true"
+            android:lines="1"
+            android:gravity="left"
+            android:padding="3dp"
+            android:textCursorDrawable="@drawable/cursor"
+            android:textColor="@color/whitecolor"
+            android:textColorLink="@color/whitecolor" >
 
-    <ListView
-        android:id="@+id/listViewSearch"
-        android:layout_width="match_parent"
+            <requestFocus />
+        </EditText>
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/ControlButtons5" >
+        android:layout_below="@+id/ControlButtons"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp" >
 
-    </ListView>
+        <ListView
+            android:id="@+id/listViewSearch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </ListView>
+
+    </FrameLayout>
 
 </RelativeLayout>

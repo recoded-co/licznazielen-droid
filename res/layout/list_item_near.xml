@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="@drawable/white_btn_selector"
+    android:padding="10dp" >
 
-    <TextView
-        android:id="@+id/licTextView"
-        android:layout_width="fill_parent"
+    <RelativeLayout
+        android:id="@+id/RelativeLayout23"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/licTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cycadea"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/fs_16" />
+
+        <TextView
+            android:id="@+id/licTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/licTextView"
+            android:layout_toRightOf="@+id/licTextView"
+            android:paddingBottom="1dp"
+            android:paddingLeft="5dp"
+            android:text="12.5 km"
+        	android:singleLine="true"
+        	android:ellipsize="end"
+            android:lines="1"
+            android:textSize="@dimen/fs_12" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:ems="10" />
-    
+        android:layout_toRightOf="@+id/RelativeLayout23"
+        android:gravity="right" >
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/legenda_1" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/legenda_2" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/legenda_3" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/legenda_4" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/legenda_5" />
+    </LinearLayout>
+
 </RelativeLayout>

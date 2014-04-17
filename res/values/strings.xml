@@ -8,12 +8,41 @@
     <string name="signin_really_quit">Czy zamknąć aplikacje?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
+    <string name="empty"> </string>
     <string name="error_connection">No internet connection</string>
     <string name="error_server">Ooops.. something went wrong</string>
-    <string name="wait_loacal">Trwa lokalizowanie...</string>
+    <string name="wait_loacal">określamy Twoją lokalizację...</string>
     <string name="closeapp">Zamknij aplikacje</string>
     <string name="about">O projekcie</string>
     <string name="satelate">Widok satelitarny</string>
     <string name="favorite">Ulubione</string>
-    
+    <string name="add_obj_string">znajdź miejsce</string>
+    <string name="add_place_string">dodaj miejsce</string>
+    <string name="fav_string">Moje zielone miejsca</string>
+    <string name="satelate_string">Satelita</string>
+    <string name="about_string">O projekcie</string>
+    <string name="legend_string">Legenda</string>
+    <string name="about_title_string">O aplikacji</string>
+    <string name="lnz_string">Licz na zieleń</string>
+    <string name="slegend_string">LEGENDA</string>
+    <string name="act_force_string">aktywny wypoczynek</string>
+    <string name="relax_string">relaks i odpoczynek</string>
+    <string name="watch_nature_string">obserwowanie przyrody</string>
+    <string name="children_string">spędzanie czasu z dziećmi</string>
+    <string name="mettings_string">spotkania ze znajomymi i rodziną</string>
+    <string name="about_text_string">
+    <![CDATA[Aplikacja powstała w ramach projektu “Licz na zieleń” Fundacji Sendzimira. Dane na temat miejsc w otoczeniu zieleni zostały zebrane od mieszkańców  Krakowa, Łodzi, Poznania i Warszawy. Jeśli chcesz wziąć udział w badaniu, zapraszamy na <br><a href="http://www.licznazielen.pl">www.licznazielen.pl</a>.
+<br><br>
+Przyroda w mieście to fascynujący temat. Dowiedz się więcej na <br><a href="http://www.uslugiekosystemow.pl">www.uslugiekosystemow.pl</a>
+<br><br>
+Projekt “Licz na zieleń” współfinansowany przez Szwajcarię w ramach szwajcarskiego programu współpracy z nowymi krajami członkowskimi Unii Europejskiej.]]>
+   </string>
+    <string name="add_green_string">dodaj miejsce spędzania czasu w otoczeniu zieleni</string>
+    <string name="im_sorry_string">Przykro nam</string>
+    <string name="innfo_txt">"W Twoim otoczeniu nie znaleźliśmy żadnych miejsc "</string>
+    <string name="info_txt2">aktualnie aplikacja obsługuje miasta: Poznań, Łódź, Kraków i Warszawę</string>
+    <string name="add_pls_string">Nazwa miejsca</string>
+    <string name="how_spend_string">W jaki sposób spędzasz czas w tym miejscu?</string>
+    <string name="why_spend_string">Jakie cechy tego miejsca sprawiają, że chętnie spędzasz w nim czas?</string>
+    <string name="save_string">zapisz</string>
 </resources>

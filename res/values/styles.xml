@@ -49,7 +49,7 @@
 	</style>
 
 
-	<style name="DialogCustomTheme" parent="android:Theme.Holo.Dialog.NoActionBar">
+	<style name="DialogCustomTheme2" parent="android:Theme.Holo.Dialog.NoActionBar">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">false</item>
@@ -69,4 +69,30 @@
 	    <item name="android:windowExitAnimation">@android:anim/fade_out</item>
 	</style>
 
+	
+	<style name="AboutTheme" parent="android:Theme.Holo.Dialog.NoActionBar">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+	    <item name="android:windowContentOverlay">@null</item>
+	    <item name="android:windowNoTitle">true</item>
+	    <item name="android:windowIsFloating">false</item>
+	    <item name="android:backgroundDimEnabled">true</item>	    
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+	
+	<style name="SearchTheme" parent="android:Theme.Holo.Dialog.NoActionBar">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+	    <item name="android:windowContentOverlay">@null</item>
+	    <item name="android:windowNoTitle">true</item>
+	    <item name="android:windowIsFloating">false</item>
+	    <item name="android:backgroundDimEnabled">false</item>	    
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item> 
+    </style>
+	
 </resources>

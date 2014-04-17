@@ -1,49 +1,46 @@
 package it.katalpa.licz_na_zilelen;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.location.Location;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.inject.Inject;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Background;
@@ -59,19 +56,28 @@ import it.katalpa.licz_na_zilelen.helper.FavPleaceObjectListAdapter;
 import it.katalpa.licz_na_zilelen.helper.NearPleaceObjectListAdapter;
 import it.katalpa.licz_na_zilelen.helper.SearchPleaceObjectListAdapter;
 import it.katalpa.licz_na_zilelen.model.PleaceObject;
+import it.katalpa.licz_na_zilelen.model.PleaceObject.ComentsMap;
 import it.katalpa.licz_na_zilelen.service.WebApiService;
+
+/**
+*
+* @coded by katalpa.it
+*/
+
 
 @NoTitle
 @EActivity(R.layout.activity_main)
 @RoboGuice
 @OptionsMenu(R.menu.main)
-public class MainActivity extends Activity implements OnMarkerClickListener {
+public class MainActivity extends FragmentActivity implements OnMarkerClickListener {
 
 	private GoogleMap map; 
 	boolean isSatView = false;
 	boolean isFavView = false;
 	boolean hasError = false;
 	LatLng myPosition = null;
+	String apiPrefix = "beta";
+	
 	
 	List<PleaceObject> nearObjects =  null;
 	List<PleaceObject> favObjects =  null;
@@ -79,18 +85,27 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	
 	private static final int DELETE_ID = Menu.FIRST + 4;
 	FavPleaceObjectListAdapter favAdapter;
-	 SearchPleaceObjectListAdapter searchAdapter;
+	SearchPleaceObjectListAdapter searchAdapter;
 	 
 	@ViewById
-	EditText editSearch;
+	TextView headerText;
+	
+	@ViewById
+	ImageButton buttonSearch;
+	
+	@ViewById
+	Button nearButton;
+	
+	@ViewById
+	Button addButton;
 	
 	@Inject
 	WebApiService webApi;	
 	
 	int markersColor[]={
-			R.drawable.m1,
-			R.drawable.m2,
-			R.drawable.m3,
+			R.drawable.marker_lokalizacji_ulubionej_powiekszony,
+			R.drawable.marker_lokalizacji,
+			R.drawable.marker_lokalizacji_ulubionej,
 			R.drawable.m4,
 			R.drawable.m5,
 			R.drawable.m6,
@@ -105,16 +120,17 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 		
 		Intent it = this.getIntent();
 			
-		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 	    map.setMyLocationEnabled(true);
 		
 	    map.setOnMarkerClickListener(this);
 	    
 	    map.getUiSettings().setCompassEnabled(true);
-	    
+	    map.getUiSettings().setZoomControlsEnabled(false);
 	    
 	    hasError = it.hasExtra("hasError");
-	    	    		
+	    apiPrefix = it.getStringExtra("prefix");
+	    
 	    myPosition = new LatLng(
 	    			it.getDoubleExtra("Latitude",Double.parseDouble(webApi.getSettings(getApplicationContext(), "latitude","16.5603"))), 
 	    			it.getDoubleExtra("Longitude",Double.parseDouble(webApi.getSettings(getApplicationContext(), "longitude","52.2430")))
@@ -136,7 +152,19 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
         
         if(isFavView)
         	ShowFavoriteOnMap(true);
-          
+        
+        
+        if(apiPrefix.isEmpty())
+        {
+        	buttonSearch.setEnabled(false);
+    		nearButton.setEnabled(false);
+    		addButton.setEnabled(false);
+    		
+    		for (int i=0; i < 2; i++)
+    			ShowFlashMessage(0,"Twoj obszar nie jest obs³ugiwany przez aplikacje");
+        }
+        
+          /*
         editSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -150,7 +178,7 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
         
         editSearch.setEnabled(false);
         
-        
+        */
 	}
 	
 	private void ShowFavoriteOnMap(boolean isShow)
@@ -160,7 +188,7 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 		{			
 			favObjects = webApi.getFavoriteObject(getApplicationContext());
 			for (PleaceObject obs : favObjects) {
-			      addMarkerToMap(obs,0);			      
+			      addMarkerToMap(obs,obs.getMyObject()?0:2);			      
 			}			
 		}else{		
 			for (PleaceObject obs : favObjects) {
@@ -175,7 +203,7 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	{
 		 float[] result = new float[1];
 		 Location.distanceBetween (myPosition.latitude,myPosition.longitude,marker.latitude, marker.longitude,  result);
-		 return (double)result[0]/1000;
+		 return (double)Math.abs(Math.round(result[0])/10)/100;
 		
 	}
 
@@ -214,11 +242,8 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	    	
 		PleaceObject obj = findPleaceObjectByMarker(marker);
 		
-		Log.v("duda","oki");
-		
 		if(obj!=null)
 		{
-			Log.v("duda",obj.getName());
 			ShowObjectDialog(obj);
 			return true;
 		}
@@ -277,7 +302,7 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 		 Marker oMarker = map.addMarker(new MarkerOptions()
 	            .position(position)
 	            .title(po.getName())
-	            .alpha(0.7f)
+	            .alpha(1.0f)
 	            .flat(true)
 	            .icon(BitmapDescriptorFactory.fromResource(markersColor[i]))	            
             );
@@ -321,30 +346,96 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	
 	void ShowObjectDialog(final PleaceObject obj)
 	{
-		final Dialog mObjectDialog = new Dialog(this,R.style.DialogCustomTheme);
+		
+		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
+
+		double delta = visibleRegion.latLngBounds.northeast.latitude-visibleRegion.latLngBounds.southwest.latitude;
+		delta = Math.abs(delta)/4;
+		
+		
+		LatLng position = new LatLng(
+    			obj.getLatitude()-delta, 
+    			obj.getLongitude()
+    		);
+    
+		CameraUpdate center = CameraUpdateFactory.newLatLng(position);
+
+		map.moveCamera(center);
+		
+		headerText.setText(obj.getName());
+		
+		final Dialog mObjectDialog = new Dialog(this,R.style.AboutTheme);
         final RelativeLayout mObjectDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.objectdialog, null);
 
+        final ImageButton favButton = ((ImageButton) mObjectDialogView.findViewById(R.id.buttonAddFav));
         
-         ((Button) mObjectDialogView.findViewById(R.id.objectDialogClose)).setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                	mObjectDialog.cancel();
-                }
-         });
-         
-         ((Button) mObjectDialogView.findViewById(R.id.buttonAddFav)).setOnClickListener(new OnClickListener() {
+        if(webApi.getFavoriteObjectById(getApplicationContext(), obj.getId())!=null)
+        {
+        	favButton.setImageResource(R.drawable.heart_ico_active);
+        }else{
+        	favButton.setImageResource(R.drawable.heart_ico);
+        }
+        
+        favButton.setOnClickListener(new OnClickListener() {
              public void onClick(View v) {
             	 
             	 if(webApi.addFavoriteObject(getApplicationContext(), obj)!=null)
-            		 Toast.makeText(getApplicationContext(), "dodano do ulubionych", Toast.LENGTH_LONG).show();
-            	 else
-            		 Toast.makeText(getApplicationContext(), "juz jest w ulubionych", Toast.LENGTH_LONG).show();
+            	 {
+            		 favButton.setImageResource(R.drawable.heart_ico_active);
+            		 ShowFlashMessage(0, "Obiekt zosta³ dodany do Twojej listy ulubionych miejsc");
+            	 }else{
+            		 favButton.setImageResource(R.drawable.heart_ico);
+            		 webApi.deleteFavorite(getApplicationContext(), obj);
+            		 ShowFlashMessage(0, "Obiekt zosta³ usuniêty z listy Twoich ulubionych miejsc");
+            	 }  
              }
          });
          
+         
 
-        final TextView lvNearObjects = (TextView) mObjectDialogView.findViewById(R.id.objtextView);
-        lvNearObjects.setText(obj.getName()+" - "+obj.getDistance()+" km");
+         ((ImageButton) mObjectDialogView.findViewById(R.id.buttonShere)).setOnClickListener(new OnClickListener() {
+             public void onClick(View v) {
+			         Intent intent = new Intent(Intent.ACTION_SEND);
+			 		intent.setType("text/plain");
+			 		intent.putExtra(Intent.EXTRA_TEXT, "http://licznazielen.pl");
+			 		startActivity(Intent.createChooser(intent, "Udostêpnij"));
+             }
+         });
+         
+         mObjectDialog.setOnKeyListener(new OnKeyListener(){
+
+ 			@Override
+ 			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+ 				if(keyCode == KeyEvent.KEYCODE_BACK)
+ 			    {
+ 					headerText.setText(""); 			        
+ 			    }
+ 			    return false;
+ 			}			
+ 			
+ 		});
+         
+
+        TextView lvNearObjects = (TextView) mObjectDialogView.findViewById(R.id.objtextView);
+        lvNearObjects.setText(obj.getName());
             
+        lvNearObjects = (TextView) mObjectDialogView.findViewById(R.id.textViewDistance);
+        lvNearObjects.setText(obj.getDistance()+" km");
+        
+        
+        lvNearObjects = (TextView) mObjectDialogView.findViewById(R.id.aboutText);
+        
+        String sText = "";
+        
+        if(obj.getComments()!=null)
+	        for(ComentsMap nm : obj.getComments())
+	        {
+	        	sText+= "<b>"+nm.getKey() + "</b><br>- " + nm.getValue()+"<br><br>";
+	        }
+        
+               
+        lvNearObjects.setText(Html.fromHtml(sText));
+        
         mObjectDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mObjectDialog.setContentView(mObjectDialogView);
         
@@ -352,22 +443,16 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	}
 	
 	@UiThread
-	void ShowNearDialog()
+	void ShowNearDialog(final List<PleaceObject> aObjectList)
 	{
 
-		final Dialog mNearDialog = new Dialog(this,R.style.DialogCustomTheme);
+		final Dialog mNearDialog = new Dialog(this,R.style.AboutTheme);
         final RelativeLayout mNearDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.neardialog, null);
-
-        
-         ((Button) mNearDialogView.findViewById(R.id.nearDialogClose)).setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                	mNearDialog.cancel();
-                }
-         });
-         
+               
 
         final ListView lvNearObjects = (ListView) mNearDialogView.findViewById(R.id.nearlistView);
          
+        
         
         lvNearObjects.setClickable(true);
         lvNearObjects.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -381,11 +466,11 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
           }
         });        
         
-        NearPleaceObjectListAdapter adapter = new NearPleaceObjectListAdapter(this,R.layout.list_item_near,nearObjects);
+        NearPleaceObjectListAdapter adapter = new NearPleaceObjectListAdapter(this,R.layout.list_item_near,aObjectList);
  	    
  	    adapter.sort(new Comparator<PleaceObject>() {
  	    	public int compare(PleaceObject object1, PleaceObject object2) {
- 	    		return object1.getName().compareTo(object2.getName());
+ 	    		return (-1)*(object1.getName().compareTo(object2.getName()));
  	    	};
  	    });
  	    
@@ -398,43 +483,71 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 	}
 	
 	
+	@UiThread
+	void ShowNotFoundDialog()
+	{
+		final Dialog mAboutDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
+
+        final RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.dialog_confrim, null);
+
+        ((Button) mmAboutDialogView.findViewById(R.id.dlgOkButton)).setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                	mAboutDialog.cancel();
+                }
+         });
+
+         
+         mAboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+         mAboutDialog.setContentView(mmAboutDialogView);
+        
+         mAboutDialog.show();
+	}
+	
 	@Background
 	void getNearObjects(LatLng ll,LatLngBounds nowBounds)
 	{
 		//webApi.getSearchObjects("non");
 		ClearMarkers();
 		
-		nearObjects =  webApi.getNearObjects(ll.latitude,ll.longitude);
+		nearObjects =  webApi.getNearObjects(apiPrefix,ll.latitude,ll.longitude);
 		
 		if(nearObjects.size()==0)
-			ShowFlashMessage(0,"W Twoim otoczeniu nie ma ¿adnych miejsc. Miasta aktualnie obs³ugiwane przez aplikacjê to Poznañ, £ódŸ, Kraków i Warszawa");
+		{
+			ShowNotFoundDialog();
+			//ShowFlashMessage(0,"W Twoim otoczeniu nie ma ¿adnych miejsc. Miasta aktualnie obs³ugiwane przez aplikacjê to Poznañ, £ódŸ, Kraków i Warszawa");
+		}else{
 		
-		int iCounter = 0;
-		
-		for(int i=0;i<nearObjects.size();i++)
-		{			
-			PleaceObject po = nearObjects.get(i);
-			addMarkerToMap(po,i);			
+			int iCounter = 0;
 			
-			iCounter += (nowBounds.contains(new LatLng(po.getLatitude(), po.getLongitude()))?1:0);
+			for(int i=0;i<nearObjects.size();i++)
+			{			
+				PleaceObject po = nearObjects.get(i);
+				addMarkerToMap(po,1);			
+				
+				iCounter += (nowBounds.contains(new LatLng(po.getLatitude(), po.getLongitude()))?1:0);
+			}
+			
+			if(iCounter<5)
+				refreshMap(5);
+			ShowNearDialog(nearObjects);
 		}
-		
-		if(iCounter<5)
-			refreshMap(5);
-		ShowNearDialog();
 	}
 	
 	@Background
 	void addObject(PleaceObject obj)
 	{
-		if(webApi.addPleace(getApplicationContext(), obj))
+		if(webApi.addPleace(apiPrefix,getApplicationContext(), obj))
 		{
 			addMarkerToMap(obj,0);
-			ShowFlashMessage(0, "Miejsce dodane");
-		}else
-			ShowFlashMessage(0, "Miejsce juz dodane");
+			obj.setMyObject(true);
+			webApi.addFavoriteObject(getApplicationContext(), obj);
+       	 	favObjects.add(obj);
+			
+			ShowFlashMessage(0, "Lokalizacja zosta³a dodana do mapy. Dziêkujemy");
+		}
+			//ShowFlashMessage(0, "Miejsce juz dodane");
 	}
-	
+	/*
 	@Click(R.id.buttonShare)
 	 void share()
 	 {
@@ -443,15 +556,52 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 		intent.setType("text/plain");
 		intent.putExtra(Intent.EXTRA_TEXT, "http://licznazielen.pl");
 		startActivity(Intent.createChooser(intent, "Udostêpnij"));
-		/*
-		PleaceObject obj = new PleaceObject();		
-		
+	}*/
+	
+	@Click(R.id.addButton)
+	 void addObject()
+	 {			
+		/*PleaceObject obj = new PleaceObject();
 		obj.setLatitude(map.getCameraPosition().target.latitude);
-		obj.setLongitude(map.getCameraPosition().target.longitude);		
+		obj.setLongitude(map.getCameraPosition().target.longitude);	
+		addObject(obj);	*/
 		
-		addObject(obj);	*/	
 		
-	}
+		CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
+	     CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+
+       // map.moveCamera(center);
+       // map.animateCamera(zoom);
+		
+		 final Dialog mAboutDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
+
+         final RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.addobjectdialog, null);
+
+         
+         ((Button) mmAboutDialogView.findViewById(R.id.buttonSave)).setOnClickListener(new OnClickListener() {
+             public void onClick(View v) {
+            	 mAboutDialog.cancel();
+            	 
+            	 
+            	 
+            	 PleaceObject obj= new PleaceObject();
+            	 obj.setLatitude(map.getCameraPosition().target.latitude);
+         		 obj.setLongitude(map.getCameraPosition().target.longitude);
+         		 
+         		 obj.setName(((EditText) mmAboutDialogView.findViewById(R.id.editText1)).getEditableText().toString());
+         		 
+            	 addObject(obj);            	 
+             }
+         });
+         
+         
+          
+          mAboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+          mAboutDialog.setContentView(mmAboutDialogView);
+         
+          mAboutDialog.show();
+		
+	 }
 	
 	@Click(R.id.nearButton)
 	 void searchNear()
@@ -459,25 +609,7 @@ public class MainActivity extends Activity implements OnMarkerClickListener {
 		getNearObjects( map.getCameraPosition().target, map.getProjection().getVisibleRegion().latLngBounds);
 		webApi.setSettings(getApplicationContext(), "latitude",""+map.getCameraPosition().target.latitude);
 		webApi.setSettings(getApplicationContext(), "longitude",""+map.getCameraPosition().target.longitude);	
-		
-		
-		/*
-		 * VisibleRegion visibleRegion = mMap.getProjection()
-                    .getVisibleRegion();
-
-Point x = mMap.getProjection().toScreenLocation(
-                    visibleRegion.farRight);
-
-Point y = mMap.getProjection().toScreenLocation(
-                    visibleRegion.nearLeft);
-
-Point centerPoint = new Point(x.x / 2, y.y / 2);
-
-LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
-                    centerPoint);
-		 */
-		
-		//
+				
 	 }
 	
 	
@@ -486,10 +618,12 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
 	{
 		searchAdapter.clear();
 		
+		String sText = sCut.toLowerCase();
+		
 		if(sCut.length()>2)
 		{
 			for (PleaceObject obs : searchObjects) {			    
-				//if(obs.getName().startsWith(sCut,0))
+				if(obs.getName().toLowerCase().startsWith(sText,0))
 					searchAdapter.add(obs);
 			}
 		}
@@ -501,18 +635,18 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
 	@Background
 	void searchForObjects(String sSearch)
 	{		
-		searchObjects = webApi.getSearchObjects(sSearch);
+		searchObjects = webApi.getSearchObjects(apiPrefix,sSearch);
 		updateAdapter(sSearch);		
 	}
 
 	@Click(R.id.buttonSearch)
 	 void showSearchDialog()
 	 {	
-		final Dialog mNearDialog = new Dialog(this,R.style.DialogCustomTheme);
+		final Dialog mNearDialog = new Dialog(this,R.style.AboutTheme);
         final RelativeLayout mNearDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.searchdialog, null);
 
         
-         ((Button) mNearDialogView.findViewById(R.id.CancelSearchDialog)).setOnClickListener(new OnClickListener() {
+         ((ImageButton) mNearDialogView.findViewById(R.id.CancelSearchDialog)).setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                 	mNearDialog.cancel();
                 }
@@ -539,13 +673,14 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
          }); 
          
          
+         mNearDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        
+         
          searchObjects = new ArrayList<PleaceObject>();
          
-         searchAdapter = new SearchPleaceObjectListAdapter(this,R.layout.list_item_near,searchObjects);
+         searchAdapter = new SearchPleaceObjectListAdapter(this,R.layout.list_item_search,searchObjects);
   	    
          
-         
-
         final ListView lvNearObjects = (ListView) mNearDialogView.findViewById(R.id.listViewSearch);
          
         
@@ -554,10 +689,9 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
 
           @Override
           public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-
+        	mNearDialog.cancel();  
             ShowObjectDialog((PleaceObject) lvNearObjects.getItemAtPosition(position));
-            //mNearDialog.cancel();
-            
+           
           }
         });        
         
@@ -569,7 +703,7 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
  	    });
  	    
  	   lvNearObjects.setAdapter(searchAdapter);	
-         
+        
        mNearDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
        mNearDialog.setContentView(mNearDialogView);
         
@@ -579,7 +713,8 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
 	@Click(R.id.buttonMenu)
 	 void showMenu()
 	 {	
-		final Dialog mMenuDialog = new Dialog(this,R.style.DialogMenuTheme);
+		final Dialog mMenuDialog = new Dialog(this,R.style.DialogMenuTheme);		
+		
 /*
 		mMenuDialog.setOnKeyListener(new OnKeyListener(){
 
@@ -601,18 +736,22 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
         final RelativeLayout mMenuDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.menudialog, null);
 
         
-         ((Button) mMenuDialogView.findViewById(R.id.CancelMenuDialog)).setOnClickListener(new OnClickListener() {
+         ((ImageButton) mMenuDialogView.findViewById(R.id.CancelMenuDialog)).setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                 	mMenuDialog.cancel();
                 }
          });
-
+/*
          ((Button) mMenuDialogView.findViewById(R.id.buttonClose)).setOnClickListener(new OnClickListener() {
              public void onClick(View v) {
             	 MainActivity.this.finish();
              }
          });
-
+*/
+         
+        
+         
+         
          ((Button) mMenuDialogView.findViewById(R.id.buttonFavorite)).setOnClickListener(new OnClickListener() {
              public void onClick(View v) {
             	 isFavView = !isFavView;
@@ -624,18 +763,36 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
                  
                  ShowFavoriteOnMap(isFavView);
             	 
+                 if(isFavView)
+                 {
+                	 mMenuDialog.cancel();
+                	 if(!favObjects.isEmpty())
+                		 ShowNearDialog(favObjects);
+                	 else                	 
+                		 ShowFlashMessage(0, "Nie masz jeszcze ulubionych miejsc");                	 
+                 }
+                 
              }
          });
 
          ((Button) mMenuDialogView.findViewById(R.id.buttonAbout)).setOnClickListener(new OnClickListener() {
              public void onClick(View v) {
             	 
-            	 final Dialog mAboutDialog = new Dialog(MainActivity.this,R.style.DialogCustomTheme);
+            	 final Dialog mAboutDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
 
                  final RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.aboutdialog, null);
 
                  
-                  ((Button) mmAboutDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
+                 
+                 String  sText = getApplicationContext().getResources().getString(R.string.about_text_string);
+              
+
+			
+              	((TextView) mmAboutDialogView.findViewById(R.id.aboutText)).setText(Html.fromHtml(sText));
+                 
+                 
+                 
+                  ((ImageButton) mmAboutDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
                          public void onClick(View v) {
                          	mAboutDialog.cancel();
                          }
@@ -650,6 +807,38 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
              }
          });
 
+         ((Button) mMenuDialogView.findViewById(R.id.buttonLegend)).setOnClickListener(new OnClickListener() {
+             public void onClick(View v) {
+            	 
+            	 final Dialog mAboutDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
+
+                 final RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.legenddialog, null);
+
+                 
+                  ((ImageButton) mmAboutDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
+                         public void onClick(View v) {
+                         	mAboutDialog.cancel();
+                         }
+                  });
+
+                  
+                  mAboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                  mAboutDialog.setContentView(mmAboutDialogView);
+                 
+                  mAboutDialog.show();
+                  
+             }
+         });
+
+         
+         ((Button) mMenuDialogView.findViewById(R.id.buttonSatelite))
+       	.setCompoundDrawablesWithIntrinsicBounds(
+       			null,
+       			null,
+       			getApplicationContext().getResources().getDrawable(isSatView?R.drawable.slider_on:R.drawable.slider_off),
+       			null
+       	);
+         
          ((Button) mMenuDialogView.findViewById(R.id.buttonSatelite)).setOnClickListener(new OnClickListener() {
              public void onClick(View v) {
             	 isSatView = !isSatView;
@@ -660,11 +849,21 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
         	        map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         		 else
         			map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        		 
+        		 
+        		 ((Button) mMenuDialogView.findViewById(R.id.buttonSatelite))
+              	.setCompoundDrawablesWithIntrinsicBounds(
+              			null,
+              			null,
+              			getApplicationContext().getResources().getDrawable(isSatView?R.drawable.slider_on:R.drawable.slider_off),
+              			null
+              	);
+        		 
              }
          });
          
          
-         final ListView lvFavObjects = (ListView) mMenuDialogView.findViewById(R.id.listViewFavorite);
+        // final ListView lvFavObjects = (ListView) mMenuDialogView.findViewById(R.id.listViewFavorite);
          
          /*
          lvNearObjects.setClickable(true);
@@ -691,7 +890,7 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
   	    	};
   	    });*/
   	    
-  	    lvFavObjects.setAdapter(favAdapter);	
+  	  //  lvFavObjects.setAdapter(favAdapter);	
          
   	    ///registerForContextMenu(lvFavObjects);
   	    /*lvFavObjects.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
@@ -718,6 +917,8 @@ LatLng centerFromPoint = mMap.getProjection().fromScreenLocation(
          mMenuDialog.show();
 	 }
 		
+
+	
 	
 	
 }

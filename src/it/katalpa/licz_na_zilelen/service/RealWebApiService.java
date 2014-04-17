@@ -1,5 +1,8 @@
 package it.katalpa.licz_na_zilelen.service;
-
+/**
+*
+* @coded by katalpa.it
+*/
 import it.katalpa.licz_na_zilelen.helper.FavoriteDataSource;
 import it.katalpa.licz_na_zilelen.model.PleaceObject;
 
@@ -30,12 +33,10 @@ import com.google.inject.Singleton;
 public class RealWebApiService implements WebApiService {
 
 	@Override
-	public List<PleaceObject> getNearObjects(double latitude, double longitude) {
+	public List<PleaceObject> getNearObjects(String prefix,double latitude, double longitude) {
 
-		Log.v("duda","begin: ok");
-		
-		
-		final String url = "http://beta.licznazielen.pl/geocache/search/geo/?polygon={lo}";
+			
+		final String url = "http://"+prefix+".licznazielen.pl/geocache/search/geo/?polygon={lo}";
 		List<PleaceObject> list = new ArrayList<PleaceObject>();
 		RestTemplate restTemplate = new RestTemplate();
     	restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
@@ -46,9 +47,7 @@ public class RealWebApiService implements WebApiService {
     			    	
 	    	JSONObject jsonObject = new JSONObject(myObject);
 	    	
-    		Log.v("duda","res: "+jsonObject);
-    		
-            if(jsonObject.getBoolean("success"))
+    		 if(jsonObject.getBoolean("success"))
             {
             	JSONArray array = jsonObject.getJSONArray("objects");
             	
@@ -59,10 +58,8 @@ public class RealWebApiService implements WebApiService {
             	
             }
     		
-           // Log.v("duda","Otrzymano odpowiedü: "+);
-
         } catch (Exception e) {
-        	Log.v("duda","getNearObjectsError: "+e.getMessage());
+        	
         } 
 		
 		
@@ -111,10 +108,9 @@ public class RealWebApiService implements WebApiService {
 	}
 
 	@Override
-	public List<PleaceObject> getSearchObjects(String sSearchText) {
-		Log.v("duda","begin: ok");		
+	public List<PleaceObject> getSearchObjects(String prefix,String sSearchText) {
 		
-		final String url = "http://beta.licznazielen.pl/geocache/search/namehint/"+sSearchText;
+		final String url = "http://"+prefix+".licznazielen.pl/geocache/search/namehint/"+sSearchText;
 		
 		List<PleaceObject> list = new ArrayList<PleaceObject>();
 		RestTemplate restTemplate = new RestTemplate();
@@ -127,8 +123,7 @@ public class RealWebApiService implements WebApiService {
     		
     		JSONObject jsonObject = new JSONObject(myObject);
             
-            Log.v("duda","Otrzymano odpowiedü: "+jsonObject.toString());
-
+         
             if(jsonObject.getBoolean("success"))
             {
             	JSONArray array = jsonObject.getJSONArray("objects");
@@ -142,8 +137,7 @@ public class RealWebApiService implements WebApiService {
             
             
         } catch (Exception e) {
-        	e.printStackTrace();
-        	//Log.v("duda","error:"+e.getMessage());
+        	e.printStackTrace();        	
         } 
 		
 		
@@ -163,8 +157,6 @@ public class RealWebApiService implements WebApiService {
                     .put("name", sAuthor)
                     .put("comment",sMessage);
 
-            Log.v("duda","Wys≥ano zapytanie dodania terminu: "+jsonObject.toString());
-
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -179,31 +171,33 @@ public class RealWebApiService implements WebApiService {
 
 
         } catch (JSONException e) { 
-        	Log.v("duda","Eroro: "+e.getMessage());        	
-            //throw new InternalException("Bad json.", e);
+        	 //throw new InternalException("Bad json.", e);
         } catch (RestClientException e) {
-        	Log.v("duda","Eroro: "+e.getMessage());
-           // throw new InternalException("Error server", e);
+        	// throw new InternalException("Error server", e);
         } catch (IllegalArgumentException e) {
-        	Log.v("duda","Eroro: "+e.getMessage());
-           // throw new InternalException("Invalid argument exception.", e);
+        	// throw new InternalException("Invalid argument exception.", e);
         }
 
 	}
 
 	@Override
-	public boolean addPleace(Context context, PleaceObject fav) {
+	public boolean addPleace(String prefix,Context context, PleaceObject fav) {
 				
-		final String url = "http://beta.licznazielen.pl/geocache/addPoint/";
+		
+		final String url = "http://"+prefix+".licznazielen.pl/geocache/addPoint/";
 
-
-        final JSONObject jsonObject = new JSONObject();
+		final JSONObject jsonObject = new JSONObject();
        
         try {
         	
         	JSONArray array = new JSONArray();
-        	array.put(new JSONObject().put("name", "1").put("value", "dwa"));
-        	array.put(new JSONObject().put("name", "2").put("value", "dwa"));
+        	array.put(new JSONObject().put("name", "1").put("value", fav.getName()));
+        	
+        	for(String s: fav.getIcons())
+		    {
+		    	array.put(new JSONObject().put("name", "2").put("value", s));
+		    }        	
+        	
         	array.put(new JSONObject().put("name", "3").put("value", "dwa"));
         	
             jsonObject.put("group", "mobilki")
@@ -214,8 +208,6 @@ public class RealWebApiService implements WebApiService {
                     .put("crs", "WGS84")
                     .put("form_values", array);
 
-            Log.v("duda","Wys≥ano zapytanie dodania terminu: "+jsonObject.toString());
-
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -225,23 +217,57 @@ public class RealWebApiService implements WebApiService {
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
             final JSONObject responseJSONObject = new JSONObject(response.getBody());
-            Ln.d("Otrzymano odpowiedü: %s", responseJSONObject.toString());
-
-
-
+           
+            return true;
+            
         } catch (JSONException e) { 
-        	Log.v("duda","Eroro: "+e.getMessage());        	
-            //throw new InternalException("Bad json.", e);
+        	//throw new InternalException("Bad json.", e);
         } catch (RestClientException e) {
-        	Log.v("duda","Eroro: "+e.getMessage());
-           // throw new InternalException("Error server", e);
+        	 // throw new InternalException("Error server", e);
         } catch (IllegalArgumentException e) {
-        	Log.v("duda","Eroro: "+e.getMessage());
-           // throw new InternalException("Invalid argument exception.", e);
+        	// throw new InternalException("Invalid argument exception.", e);
         }
 
 		
 		return false;
+	}
+
+	@Override
+	public PleaceObject getFavoriteObjectById(Context context, int id) {
+		FavoriteDataSource oWblds = new FavoriteDataSource(context);
+		oWblds.open();
+		PleaceObject oContact = oWblds.getFavoriteByObjId(id);
+		oWblds.close();
+		return oContact;
+	}
+
+	@Override
+	public String getPrefix(double latitude,double longitude) {		
+		
+		final String url = "http://www.licznazielen.pl/getprefix/?point={lo}";
+
+		String list = "";
+		
+		RestTemplate restTemplate = new RestTemplate();
+    	restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+    	
+    	try {
+    		    	
+	    	String myObject = restTemplate.getForObject(url, String.class,"POINT ("+longitude+" "+latitude+")");
+    		
+	    	JSONObject jsonObject = new JSONObject(myObject);
+	    	
+    		 if(jsonObject.getBoolean("success"))
+	            {
+	    			 list = jsonObject.getString("prefix");
+	            }
+    		
+        } catch (Exception e) {
+        	
+        }
+		
+		
+		return list;
 	}
 
 	
