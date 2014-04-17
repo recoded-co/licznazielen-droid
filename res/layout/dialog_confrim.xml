@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/DateTimeDialog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:paddingBottom="15dp"
+    android:paddingLeft="33dp"
+    android:paddingRight="33dp"
+    android:paddingTop="15dp" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/whitecolor"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/im_sorry_string"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/head_popup" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="10dp"
+            android:text="@string/innfo_txt"
+            android:textColor="@color/text_popup" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/idTextMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="15dp"
+            android:gravity="center"
+                android:text="@string/info_txt2"
+                android:textColor="@color/text_popup" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ControlButtons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/dlgOkButton"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/white2_btn_selector"
+                android:text="Cancel"
+                android:textColor="@color/gray_text" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

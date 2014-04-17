@@ -76,25 +76,10 @@ public final class MainActivity_
     private void afterSetContentView_() {
         scope_.injectViews();
         eventManager_.fire(new OnContentViewAvailableEvent());
-        addButton = ((Button) findViewById(id.addButton));
-        nearButton = ((Button) findViewById(id.nearButton));
         buttonSearch = ((ImageButton) findViewById(id.buttonSearch));
+        nearButton = ((Button) findViewById(id.nearButton));
         headerText = ((TextView) findViewById(id.headerText));
-        {
-            View view = findViewById(id.nearButton);
-            if (view!= null) {
-                view.setOnClickListener(new OnClickListener() {
-
-
-                    @Override
-                    public void onClick(View view) {
-                        MainActivity_.this.searchNear();
-                    }
-
-                }
-                );
-            }
-        }
+        addButton = ((Button) findViewById(id.addButton));
         {
             View view = findViewById(id.addButton);
             if (view!= null) {
@@ -111,21 +96,6 @@ public final class MainActivity_
             }
         }
         {
-            View view = findViewById(id.buttonMenu);
-            if (view!= null) {
-                view.setOnClickListener(new OnClickListener() {
-
-
-                    @Override
-                    public void onClick(View view) {
-                        MainActivity_.this.showMenu();
-                    }
-
-                }
-                );
-            }
-        }
-        {
             View view = findViewById(id.buttonSearch);
             if (view!= null) {
                 view.setOnClickListener(new OnClickListener() {
@@ -134,6 +104,36 @@ public final class MainActivity_
                     @Override
                     public void onClick(View view) {
                         MainActivity_.this.showSearchDialog();
+                    }
+
+                }
+                );
+            }
+        }
+        {
+            View view = findViewById(id.nearButton);
+            if (view!= null) {
+                view.setOnClickListener(new OnClickListener() {
+
+
+                    @Override
+                    public void onClick(View view) {
+                        MainActivity_.this.searchNear();
+                    }
+
+                }
+                );
+            }
+        }
+        {
+            View view = findViewById(id.buttonMenu);
+            if (view!= null) {
+                view.setOnClickListener(new OnClickListener() {
+
+
+                    @Override
+                    public void onClick(View view) {
+                        MainActivity_.this.showMenu();
                     }
 
                 }
@@ -268,60 +268,6 @@ public final class MainActivity_
     }
 
     @Override
-    public void refreshMap(final int iCount) {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    MainActivity_.super.refreshMap(iCount);
-                } catch (RuntimeException e) {
-                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
-    }
-
-    @Override
-    public void ShowFlashMessage(final int type, final String sMessage) {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    MainActivity_.super.ShowFlashMessage(type, sMessage);
-                } catch (RuntimeException e) {
-                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
-    }
-
-    @Override
-    public void ClearMarkers() {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    MainActivity_.super.ClearMarkers();
-                } catch (RuntimeException e) {
-                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
-    }
-
-    @Override
     public void updateAdapter(final String sCut) {
         handler_.post(new Runnable() {
 
@@ -330,24 +276,6 @@ public final class MainActivity_
             public void run() {
                 try {
                     MainActivity_.super.updateAdapter(sCut);
-                } catch (RuntimeException e) {
-                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
-    }
-
-    @Override
-    public void addMarkerToMap(final PleaceObject po, final int i) {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    MainActivity_.super.addMarkerToMap(po, i);
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -394,14 +322,68 @@ public final class MainActivity_
     }
 
     @Override
-    public void searchForObjects(final String sSearch) {
-        BackgroundExecutor.execute(new Runnable() {
+    public void ShowFlashMessage(final int type, final String sMessage) {
+        handler_.post(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    MainActivity_.super.searchForObjects(sSearch);
+                    MainActivity_.super.ShowFlashMessage(type, sMessage);
+                } catch (RuntimeException e) {
+                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void refreshMap(final int iCount) {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    MainActivity_.super.refreshMap(iCount);
+                } catch (RuntimeException e) {
+                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void addMarkerToMap(final PleaceObject po, final int i) {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    MainActivity_.super.addMarkerToMap(po, i);
+                } catch (RuntimeException e) {
+                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void ClearMarkers() {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    MainActivity_.super.ClearMarkers();
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -420,6 +402,24 @@ public final class MainActivity_
             public void run() {
                 try {
                     MainActivity_.super.getNearObjects(ll, nowBounds);
+                } catch (RuntimeException e) {
+                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void searchForObjects(final String sSearch) {
+        BackgroundExecutor.execute(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    MainActivity_.super.searchForObjects(sSearch);
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }

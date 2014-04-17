@@ -150,7 +150,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
         	map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         
         
-        if(isFavView)
+        //if(isFavView)
         	ShowFavoriteOnMap(true);
         
         
@@ -715,24 +715,21 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	 {	
 		final Dialog mMenuDialog = new Dialog(this,R.style.DialogMenuTheme);		
 		
-/*
+
 		mMenuDialog.setOnKeyListener(new OnKeyListener(){
 
 			@Override
 			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				if(keyCode == KeyEvent.KEYCODE_MENU)
+				if(keyCode == KeyEvent.KEYCODE_MENU  && event.getAction() == 0)
 			    {
 			        dialog.cancel();
-			        return false;
+			        return true;
 			    }
-			    return true;
+			    return false;
 			}			
 			
 		});
-		
-		*/
-		
-		
+				
         final RelativeLayout mMenuDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.menudialog, null);
 
         
@@ -754,7 +751,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
          
          ((Button) mMenuDialogView.findViewById(R.id.buttonFavorite)).setOnClickListener(new OnClickListener() {
              public void onClick(View v) {
-            	 isFavView = !isFavView;
+            	 /*isFavView = !isFavView;
             	 
                  webApi.setSettings(getApplicationContext(), "fav", ""+isFavView);
                  
@@ -764,13 +761,13 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
                  ShowFavoriteOnMap(isFavView);
             	 
                  if(isFavView)
-                 {
+                 {*/
                 	 mMenuDialog.cancel();
                 	 if(!favObjects.isEmpty())
                 		 ShowNearDialog(favObjects);
                 	 else                	 
                 		 ShowFlashMessage(0, "Nie masz jeszcze ulubionych miejsc");                	 
-                 }
+                // }
                  
              }
          });
