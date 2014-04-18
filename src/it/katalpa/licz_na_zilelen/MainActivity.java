@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import org.json.JSONArray;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -24,6 +27,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -188,7 +192,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		{			
 			favObjects = webApi.getFavoriteObject(getApplicationContext());
 			for (PleaceObject obs : favObjects) {
-			      addMarkerToMap(obs,obs.getMyObject()?0:2);			      
+			      addMarkerToMap(obs,2);			      
 			}			
 		}else{		
 			for (PleaceObject obs : favObjects) {
@@ -230,6 +234,17 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	    return null; 
 	}
 	
+	
+	public boolean IsInFavorite(int iObjId)
+	{
+		if(favObjects!= null)
+		    for (PleaceObject obs : favObjects) {
+		        if (iObjId==obs.getId()) {
+		            return true;
+		        }
+		    }
+		return false;
+	}
 	
 	@UiThread
 	 public void ShowFlashMessage(int type,String sMessage)
@@ -537,12 +552,11 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	void addObject(PleaceObject obj)
 	{
 		if(webApi.addPleace(apiPrefix,getApplicationContext(), obj))
-		{
-			addMarkerToMap(obj,0);
+		{			
 			obj.setMyObject(true);
 			webApi.addFavoriteObject(getApplicationContext(), obj);
        	 	favObjects.add(obj);
-			
+       	 	addMarkerToMap(obj,2);			
 			ShowFlashMessage(0, "Lokalizacja zosta³a dodana do mapy. Dziêkujemy");
 		}
 			//ShowFlashMessage(0, "Miejsce juz dodane");
@@ -568,7 +582,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		
 		
 		CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
-	     CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+	    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 
        // map.moveCamera(center);
        // map.animateCamera(zoom);
@@ -590,6 +604,26 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
          		 
          		 obj.setName(((EditText) mmAboutDialogView.findViewById(R.id.editText1)).getEditableText().toString());
          		 
+         		 
+         		 obj.aIcons = new ArrayList<String>(); 
+            	
+            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox1)).isChecked())
+            		 obj.aIcons.add("1");         		
+            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox2)).isChecked())
+            		 obj.aIcons.add("2");
+            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox3)).isChecked())
+            		 obj.aIcons.add("3");
+            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox4)).isChecked())
+            		 obj.aIcons.add("4");
+            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox5)).isChecked())
+            		 obj.aIcons.add("5");
+         		 
+         		 obj.aComments = new ArrayList<ComentsMap>();           		
+           		 obj.aComments.add( obj.new ComentsMap(	            				            				
+       					"Jakie cechy tego miejsca sprawiaj¹, ¿e chêtnie spêdzasz w nim czas?",
+       					((EditText) mmAboutDialogView.findViewById(R.id.editText2)).getEditableText().toString()
+       			 ));         		 
+         		
             	 addObject(obj);            	 
              }
          });

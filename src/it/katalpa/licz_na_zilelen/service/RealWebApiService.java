@@ -5,6 +5,7 @@ package it.katalpa.licz_na_zilelen.service;
 */
 import it.katalpa.licz_na_zilelen.helper.FavoriteDataSource;
 import it.katalpa.licz_na_zilelen.model.PleaceObject;
+import it.katalpa.licz_na_zilelen.model.PleaceObject.ComentsMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,7 +199,13 @@ public class RealWebApiService implements WebApiService {
 		    	array.put(new JSONObject().put("name", "2").put("value", s));
 		    }        	
         	
-        	array.put(new JSONObject().put("name", "3").put("value", "dwa"));
+        	//array.put(new JSONObject().put("name", "3").put("value", "dwa"));
+        	
+        	if(fav.getComments()!=null)
+     	        for(ComentsMap nm : fav.getComments())
+     	        {
+     	        	array.put(new JSONObject().put("name", "3").put("value", nm.getValue()));
+     	        }
         	
             jsonObject.put("group", "mobilki")
                     .put("name", "wersja-1")
