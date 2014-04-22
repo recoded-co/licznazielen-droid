@@ -485,7 +485,9 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
  	    
  	    adapter.sort(new Comparator<PleaceObject>() {
  	    	public int compare(PleaceObject object1, PleaceObject object2) {
- 	    		return (-1)*(object1.getName().compareTo(object2.getName()));
+ 	    		//SORT CHANGE
+ 	    		return object1.compareTo(object2);
+ 	    		//return (-1)*(object1.getName().compareTo(object2.getName()));
  	    	};
  	    });
  	    
