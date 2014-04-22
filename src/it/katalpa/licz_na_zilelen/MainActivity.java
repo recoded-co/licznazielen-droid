@@ -558,6 +558,8 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
        	 	favObjects.add(obj);
        	 	addMarkerToMap(obj,2);			
 			ShowFlashMessage(0, "Lokalizacja zosta³a dodana do mapy. Dziêkujemy");
+		}else{
+			ShowFlashMessage(0, "Nie mo¿na dodaæ miejsca, spróbuj ponownie za chwilê.");
 		}
 			//ShowFlashMessage(0, "Miejsce juz dodane");
 	}
