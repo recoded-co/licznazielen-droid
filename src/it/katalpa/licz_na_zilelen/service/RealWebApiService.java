@@ -8,6 +8,7 @@ import it.katalpa.licz_na_zilelen.model.PleaceObject;
 import it.katalpa.licz_na_zilelen.model.PleaceObject.ComentsMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -190,7 +191,7 @@ public class RealWebApiService implements WebApiService {
 		final JSONObject jsonObject = new JSONObject();
        
         try {
-        	
+        	/*
         	JSONArray array = new JSONArray();
         	array.put(new JSONObject().put("name", "1").put("value", fav.getName()));
         	
@@ -206,9 +207,36 @@ public class RealWebApiService implements WebApiService {
      	        {
      	        	array.put(new JSONObject().put("name", "3").put("value", nm.getValue()));
      	        }
+			*/
+        	JSONArray array = new JSONArray();
+        	if (fav.getName() != null && !fav.getName().equals("")){
+        		array.put(new JSONObject().put("name", "<b>Nazwa-miejsca-(jeæli-dotyczy)-</b></br>").put("value", fav.getName()));
+        	}
         	
-            jsonObject.put("group", "mobilki")
-                    .put("name", "wersja-1")
+        	HashMap<String, String> iconsToValues = new HashMap<String, String>();
+        	iconsToValues.put("1", "relaks-i-odpoczynek");
+        	iconsToValues.put("2", "aktywny-wypoczynek");
+        	iconsToValues.put("3", "spotkania-ze-znajomymi-i-rodzina");
+        	iconsToValues.put("4", "obserwowanie-przyrody");
+        	iconsToValues.put("5", "w-jaki-sposob-spedza-pani-czas-w-tym-miejscu");
+        	
+        	for(String s: fav.getIcons())
+		    {	
+        		String value = iconsToValues.get(s);
+        		array.put(new JSONObject().put("name", "w-jaki-sposob-spedza-pani-czas-w-tym-miejscu").put("value", value));
+		    }        	
+        	
+        	if(fav.getComments()!=null)
+     	        for(ComentsMap nm : fav.getComments())
+     	        {
+     	        	if (!nm.getValue().equals("")){
+     	        		array.put(new JSONObject().put("name", "<b>Jakie-cechy-tego-miejsca-sprawiajˆ,-ýe-ch«tnie-sp«dza-Pan(i)-w-nim-czas?-</b>").put("value", nm.getValue()));
+     	        	}
+     	        }
+            jsonObject.put("group", "Q-mapa-1")
+                    .put("name", "miejsca-spedzania-czasu-w-otoczeniu-zieleni")
+                    .put("popup_id", "miejsca-spedzania-czasu-w-otoczeniu-zieleni-60")
+                    .put("mobile", "True")
                     .put("user","13242423")
                     .put("lat", fav.getLatitude())
                     .put("lon", fav.getLongitude())
@@ -224,7 +252,7 @@ public class RealWebApiService implements WebApiService {
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
             final JSONObject responseJSONObject = new JSONObject(response.getBody());
-           
+            
             return true;
             
         } catch (JSONException e) { 
