@@ -9,9 +9,9 @@
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="empty"> </string>
-    <string name="error_connection">No internet connection</string>
-    <string name="error_server">Ooops.. something went wrong</string>
-    <string name="wait_loacal">określamy Twoją lokalizację...</string>
+    <string name="error_connection">Brak połączenia z Internetem</string>
+    <string name="error_server">Ooops.. coś poszło ni etak</string>
+    <string name="wait_loacal">Określamy Twoją lokalizację...</string>
     <string name="closeapp">Zamknij aplikacje</string>
     <string name="about">O projekcie</string>
     <string name="satelate">Widok satelitarny</string>
@@ -45,4 +45,13 @@ Projekt “Licz na zieleń” współfinansowany przez Szwajcarię w ramach szwa
     <string name="how_spend_string">W jaki sposób spędzasz czas w tym miejscu?</string>
     <string name="why_spend_string">Jakie cechy tego miejsca sprawiają, że chętnie spędzasz w nim czas?</string>
     <string name="save_string">zapisz</string>
+    
+    <string name="fav_add">Obiekt został dodany do Twojej listy ulubionych miejsc</string>
+    <string name="fav_del">Obiekt został usunięty z listy Twoich ulubionych miejsc</string>
+    <string name="fav_0">Nie masz jeszcze ulubionych miejsc</string>
+    <string name="share">Udostępnij</string>
+    <string name="place_add">Lokalizacja została dodana do mapy. Dziękujemy</string>
+    <string name="place_add_error">Nie można dodać miejsca, spróbuj ponownie za chwilę.</string>
+    <string name="place_add_comment">"Jakie cechy tego miejsca sprawiają, że chętnie spędzasz w nim czas?",</string>
+    <string name="no_signal">Twoj obszar nie jest obsługiwany przez aplikacje</string>
 </resources>

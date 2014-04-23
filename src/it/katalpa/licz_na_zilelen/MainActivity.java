@@ -165,7 +165,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
     		addButton.setEnabled(false);
     		
     		for (int i=0; i < 2; i++)
-    			ShowFlashMessage(0,"Twoj obszar nie jest obs³ugiwany przez aplikacje");
+    			ShowFlashMessage(0, getApplicationContext().getResources().getString(R.string.no_signal));
         }
         
           /*
@@ -397,11 +397,11 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
             	 if(webApi.addFavoriteObject(getApplicationContext(), obj)!=null)
             	 {
             		 favButton.setImageResource(R.drawable.heart_ico_active);
-            		 ShowFlashMessage(0, "Obiekt zosta³ dodany do Twojej listy ulubionych miejsc");
+            		 ShowFlashMessage(0, getApplicationContext().getResources().getString(R.string.fav_add));
             	 }else{
             		 favButton.setImageResource(R.drawable.heart_ico);
             		 webApi.deleteFavorite(getApplicationContext(), obj);
-            		 ShowFlashMessage(0, "Obiekt zosta³ usuniêty z listy Twoich ulubionych miejsc");
+            		 ShowFlashMessage(0, getApplicationContext().getResources().getString(R.string.fav_del));
             	 }  
              }
          });
@@ -413,7 +413,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 			         Intent intent = new Intent(Intent.ACTION_SEND);
 			 		intent.setType("text/plain");
 			 		intent.putExtra(Intent.EXTRA_TEXT, "http://licznazielen.pl");
-			 		startActivity(Intent.createChooser(intent, "Udostêpnij"));
+			 		startActivity(Intent.createChooser(intent, getApplicationContext().getResources().getString(R.string.share)));
              }
          });
          
@@ -531,7 +531,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		if(nearObjects.size()==0)
 		{
 			ShowNotFoundDialog();
-			//ShowFlashMessage(0,"W Twoim otoczeniu nie ma ¿adnych miejsc. Miasta aktualnie obs³ugiwane przez aplikacjê to Poznañ, £ódŸ, Kraków i Warszawa");
+			//ShowFlashMessage(0,"W Twoim otoczeniu nie ma Å¼adnych miejsc. Miasta aktualnie obsÅ‚ugiwane przez aplikacjÄ™ to PoznaÅ„, ï¿½ï¿½dï¿½, Krakï¿½w i Warszawa");
 		}else{
 		
 			int iCounter = 0;
@@ -559,9 +559,9 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 			webApi.addFavoriteObject(getApplicationContext(), obj);
        	 	favObjects.add(obj);
        	 	addMarkerToMap(obj,2);			
-			ShowFlashMessage(0, "Lokalizacja zosta³a dodana do mapy. Dziêkujemy");
+			ShowFlashMessage(0,  getApplicationContext().getResources().getString(R.string.place_add));
 		}else{
-			ShowFlashMessage(0, "Nie mo¿na dodaæ miejsca, spróbuj ponownie za chwilê.");
+			ShowFlashMessage(0,  getApplicationContext().getResources().getString(R.string.place_add_error));
 		}
 			//ShowFlashMessage(0, "Miejsce juz dodane");
 	}
@@ -573,7 +573,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("text/plain");
 		intent.putExtra(Intent.EXTRA_TEXT, "http://licznazielen.pl");
-		startActivity(Intent.createChooser(intent, "Udostêpnij"));
+		startActivity(Intent.createChooser(intent, "Udostï¿½pnij"));
 	}*/
 	
 	@Click(R.id.addButton)
@@ -624,7 +624,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
          		 
          		 obj.aComments = new ArrayList<ComentsMap>();           		
            		 obj.aComments.add( obj.new ComentsMap(	            				            				
-       					"Jakie cechy tego miejsca sprawiaj¹, ¿e chêtnie spêdzasz w nim czas?",
+           				getApplicationContext().getResources().getString(R.string.place_add_comment),
        					((EditText) mmAboutDialogView.findViewById(R.id.editText2)).getEditableText().toString()
        			 ));         		 
          		
@@ -805,7 +805,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
                 	 if(!favObjects.isEmpty())
                 		 ShowNearDialog(favObjects);
                 	 else                	 
-                		 ShowFlashMessage(0, "Nie masz jeszcze ulubionych miejsc");                	 
+                		 ShowFlashMessage(0, getApplicationContext().getResources().getString(R.string.fav_0));                	 
                 // }
                  
              }
@@ -934,7 +934,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             	//menu.setHeaderTitle("Menu");
-            	menu.add(Menu.NONE, DELETE_ID, Menu.NONE, "Usuñ")
+            	menu.add(Menu.NONE, DELETE_ID, Menu.NONE, "Usuï¿½")
                  .setOnMenuItemClickListener(new OnMenuItemClickListener() {
                      public boolean onMenuItemClick(MenuItem item) {
                     	 	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();         	       		
