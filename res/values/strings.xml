@@ -54,4 +54,6 @@ Projekt “Licz na zieleń” współfinansowany przez Szwajcarię w ramach szwa
     <string name="place_add_error">Nie można dodać miejsca, spróbuj ponownie za chwilę.</string>
     <string name="place_add_comment">"Jakie cechy tego miejsca sprawiają, że chętnie spędzasz w nim czas?",</string>
     <string name="no_signal">Twoj obszar nie jest obsługiwany przez aplikacje</string>
+    <string name="wait_search">trwa wyszukiwanie...</string>
+    <string name="hold_marker">Przytrzymaj marker w celu ustalenia dokładnej lokalizacji.</string>
 </resources>

@@ -20,4 +20,6 @@ public interface WebApiService {
 	public boolean addPleace(String prefix,Context context, PleaceObject fav);
 	public PleaceObject getFavoriteObjectById(Context context,int id );	
 	public String getPrefix(double latitude,double longitude);	
+	public double[] getRegion(String prefix);
+	public String getPrefixByPosition(double lat,double lon);
 }

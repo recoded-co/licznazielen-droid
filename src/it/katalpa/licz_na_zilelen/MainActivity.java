@@ -1,35 +1,38 @@
 package it.katalpa.licz_na_zilelen;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.json.JSONArray;
+import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
 import android.text.Html;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,6 +41,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -73,7 +77,7 @@ import it.katalpa.licz_na_zilelen.service.WebApiService;
 @EActivity(R.layout.activity_main)
 @RoboGuice
 @OptionsMenu(R.menu.main)
-public class MainActivity extends FragmentActivity implements OnMarkerClickListener {
+public class MainActivity extends FragmentActivity implements OnMarkerClickListener,OnMarkerDragListener {
 
 	private GoogleMap map; 
 	boolean isSatView = false;
@@ -81,7 +85,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	boolean hasError = false;
 	LatLng myPosition = null;
 	String apiPrefix = "beta";
-	
+	Dialog progressDialog = null;
 	
 	List<PleaceObject> nearObjects =  null;
 	List<PleaceObject> favObjects =  null;
@@ -90,6 +94,8 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	private static final int DELETE_ID = Menu.FIRST + 4;
 	FavPleaceObjectListAdapter favAdapter;
 	SearchPleaceObjectListAdapter searchAdapter;
+	
+	Marker draggMarker = null;
 	 
 	@ViewById
 	TextView headerText;
@@ -135,10 +141,14 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	    hasError = it.hasExtra("hasError");
 	    apiPrefix = it.getStringExtra("prefix");
 	    
+	    
+	    
 	    myPosition = new LatLng(
 	    			it.getDoubleExtra("Latitude",Double.parseDouble(webApi.getSettings(getApplicationContext(), "latitude","16.5603"))), 
 	    			it.getDoubleExtra("Longitude",Double.parseDouble(webApi.getSettings(getApplicationContext(), "longitude","52.2430")))
 	    		);
+	    
+	    getNearObjects( map.getCameraPosition().target, map.getProjection().getVisibleRegion().latLngBounds,false);
 	    
 	    CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
 	    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
@@ -146,6 +156,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
         map.moveCamera(center);
         map.animateCamera(zoom);
         
+        map.setOnMarkerDragListener(this);
         
         isSatView = Boolean.parseBoolean(webApi.getSettings(getApplicationContext(), "satelite", "false"));
         isFavView = Boolean.parseBoolean(webApi.getSettings(getApplicationContext(), "fav", "false"));
@@ -254,7 +265,13 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	
 	@Override
 	public boolean onMarkerClick(final Marker marker) {
-	    	
+	    		
+		if(marker.isDraggable())
+		{
+			ShowAddObjectDialog(marker);
+			return true;
+		}
+		
 		PleaceObject obj = findPleaceObjectByMarker(marker);
 		
 		if(obj!=null)
@@ -300,6 +317,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	@UiThread
 	 public void ClearMarkers()
 	{
+		if(nearObjects!=null)
 		for (PleaceObject obs : nearObjects) {
 	       obs.getMarker().remove();
 	    }
@@ -329,6 +347,23 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 			 po.setDistance(calcDistanceFromMyPosition(position));
 		 
 	 }
+	
+	@UiThread
+	 public void addDragMarkerToMap(double lat,double lon)
+	 {
+		 
+		 
+		 LatLng position = new LatLng(lat, lon);
+		 
+		 Marker oMarker = map.addMarker(new MarkerOptions()
+	            .position(position)
+	            .draggable(true)
+	            .alpha(1.0f)
+	            .flat(true)
+	            .icon(BitmapDescriptorFactory.fromResource(markersColor[0]))	            
+           );
+	}
+	
 	
 	@UiThread
 	 public void refreshMap(int iCount)
@@ -520,40 +555,89 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
          mAboutDialog.show();
 	}
 	
-	@Background
-	void getNearObjects(LatLng ll,LatLngBounds nowBounds)
+	@UiThread
+	void ShowFlashMessageEx(int i,boolean sn)
 	{
+		//if(sn)
+			ShowFlashMessage(0,  getApplicationContext().getResources().getString(i));
+	}
+	
+	@UiThread
+	void ShowProgressDialog(boolean sh)
+	{
+		if(sh)
+		{
+			if(progressDialog==null)
+			{				
+				progressDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
+
+		        RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.dialog_progress, null);
+		         		     
+		        
+		        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate);
+				((ImageView) mmAboutDialogView.findViewById(R.id.imageRadar2)).startAnimation(animation);
+		        
+		        
+		        progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		        progressDialog.setContentView(mmAboutDialogView);
+		         
+		       
+		        progressDialog.show();
+			}
+		}else{
+			if(progressDialog!=null)
+				progressDialog.cancel();
+		}
+	}
+	
+	
+	@Background
+	void getNearObjects(LatLng ll,LatLngBounds nowBounds,boolean showDialogs)
+	{
+		
+		ShowProgressDialog(true);
 		//webApi.getSearchObjects("non");
 		ClearMarkers();
 		
 		nearObjects =  webApi.getNearObjects(apiPrefix,ll.latitude,ll.longitude);
 		
-		if(nearObjects.size()==0)
+		if(nearObjects==null)
 		{
-			ShowNotFoundDialog();
-			//ShowFlashMessage(0,"W Twoim otoczeniu nie ma żadnych miejsc. Miasta aktualnie obsługiwane przez aplikację to Poznań, ��d�, Krak�w i Warszawa");
+			ShowFlashMessageEx(R.string.no_signal,true);
 		}else{
 		
-			int iCounter = 0;
+			if(nearObjects.size()==0)
+			{
+				if(showDialogs)
+					ShowNotFoundDialog();
+				//ShowFlashMessage(0,"W Twoim otoczeniu nie ma żadnych miejsc. Miasta aktualnie obsługiwane przez aplikację to Poznań, ��d�, Krak�w i Warszawa");
+			}else{
 			
-			for(int i=0;i<nearObjects.size();i++)
-			{			
-				PleaceObject po = nearObjects.get(i);
-				addMarkerToMap(po,1);			
+				int iCounter = 0;
 				
-				iCounter += (nowBounds.contains(new LatLng(po.getLatitude(), po.getLongitude()))?1:0);
+				for(int i=0;i<nearObjects.size();i++)
+				{			
+					PleaceObject po = nearObjects.get(i);
+					addMarkerToMap(po,1);			
+					
+					iCounter += (nowBounds.contains(new LatLng(po.getLatitude(), po.getLongitude()))?1:0);
+				}
+				
+				if(iCounter<5)
+					refreshMap(5);
+				
+				if(showDialogs)
+					ShowNearDialog(nearObjects);
 			}
-			
-			if(iCounter<5)
-				refreshMap(5);
-			ShowNearDialog(nearObjects);
+		
 		}
+		ShowProgressDialog(false);
 	}
 	
 	@Background
 	void addObject(PleaceObject obj)
 	{
-		if(webApi.addPleace(apiPrefix,getApplicationContext(), obj))
+		if(webApi.addPleace(apiPrefix,getApplicationContext(), obj))		
 		{			
 			obj.setMyObject(true);
 			webApi.addFavoriteObject(getApplicationContext(), obj);
@@ -576,6 +660,80 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		startActivity(Intent.createChooser(intent, "Udost�pnij"));
 	}*/
 	
+	private void ShowAddObjectDialog(final Marker dMarker)
+	{
+		
+		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
+
+		double delta = visibleRegion.latLngBounds.northeast.latitude-visibleRegion.latLngBounds.southwest.latitude;
+		delta = Math.abs(delta)/4;
+		
+		
+		LatLng position = new LatLng(
+				dMarker.getPosition().latitude-delta, 
+				dMarker.getPosition().longitude
+    		);
+    
+		CameraUpdate center = CameraUpdateFactory.newLatLng(position);
+
+		map.moveCamera(center);
+		
+		
+		final Dialog mAboutDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
+
+        final RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.addobjectdialog, null);
+
+        
+        ((Button) mmAboutDialogView.findViewById(R.id.buttonSave)).setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+           	 mAboutDialog.cancel();
+           	 
+           	 
+           	 
+           	 PleaceObject obj= new PleaceObject();
+           	 //obj.setLatitude(map.getCameraPosition().target.latitude);
+        	//	 obj.setLongitude(map.getCameraPosition().target.longitude);
+        		 
+        		 obj.setLatitude(dMarker.getPosition().latitude);
+        		 obj.setLongitude(dMarker.getPosition().longitude);
+        			 
+        		 
+        		 
+        		 obj.setName(((EditText) mmAboutDialogView.findViewById(R.id.editText1)).getEditableText().toString());
+        		 
+        		 
+        		 obj.aIcons = new ArrayList<String>(); 
+           	
+           	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox1)).isChecked())
+           		 obj.aIcons.add("1");         		
+           	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox2)).isChecked())
+           		 obj.aIcons.add("2");
+           	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox3)).isChecked())
+           		 obj.aIcons.add("3");
+           	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox4)).isChecked())
+           		 obj.aIcons.add("4");
+           	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox5)).isChecked())
+           		 obj.aIcons.add("5");
+        		 
+        		 obj.aComments = new ArrayList<ComentsMap>();           		
+          		 obj.aComments.add( obj.new ComentsMap(	            				            				
+          				getApplicationContext().getResources().getString(R.string.place_add_comment),
+      					((EditText) mmAboutDialogView.findViewById(R.id.editText2)).getEditableText().toString()
+      			 ));         		 
+        		
+           	 addObject(obj);
+          		dMarker.remove();
+            }
+        });
+        
+        
+         
+         mAboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+         mAboutDialog.setContentView(mmAboutDialogView);
+        
+         mAboutDialog.show();
+	}
+	
 	@Click(R.id.addButton)
 	 void addObject()
 	 {			
@@ -585,69 +743,41 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		addObject(obj);	*/
 		
 		
-		CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
-	    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+		//CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
+	    //CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+	    addDragMarkerToMap(map.getCameraPosition().target.latitude,map.getCameraPosition().target.longitude);
+	    
+/*
+		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
 
+		Log.v("duda4","reg[0]="+
+				visibleRegion.latLngBounds.southwest.latitude+
+				";reg[1]="+
+				visibleRegion.latLngBounds.northeast.latitude+
+				";reg[2]="+
+				visibleRegion.latLngBounds.northeast.longitude+
+				";reg[3]="+
+				visibleRegion.latLngBounds.southwest.longitude+
+				";"
+				);
+				*/
+	    ShowFlashMessageEx(R.string.hold_marker,false);
+	    
        // map.moveCamera(center);
        // map.animateCamera(zoom);
 		
-		 final Dialog mAboutDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
-
-         final RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.addobjectdialog, null);
-
-         
-         ((Button) mmAboutDialogView.findViewById(R.id.buttonSave)).setOnClickListener(new OnClickListener() {
-             public void onClick(View v) {
-            	 mAboutDialog.cancel();
-            	 
-            	 
-            	 
-            	 PleaceObject obj= new PleaceObject();
-            	 obj.setLatitude(map.getCameraPosition().target.latitude);
-         		 obj.setLongitude(map.getCameraPosition().target.longitude);
-         		 
-         		 obj.setName(((EditText) mmAboutDialogView.findViewById(R.id.editText1)).getEditableText().toString());
-         		 
-         		 
-         		 obj.aIcons = new ArrayList<String>(); 
-            	
-            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox1)).isChecked())
-            		 obj.aIcons.add("1");         		
-            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox2)).isChecked())
-            		 obj.aIcons.add("2");
-            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox3)).isChecked())
-            		 obj.aIcons.add("3");
-            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox4)).isChecked())
-            		 obj.aIcons.add("4");
-            	 if(((CheckBox) mmAboutDialogView.findViewById(R.id.checkBox5)).isChecked())
-            		 obj.aIcons.add("5");
-         		 
-         		 obj.aComments = new ArrayList<ComentsMap>();           		
-           		 obj.aComments.add( obj.new ComentsMap(	            				            				
-           				getApplicationContext().getResources().getString(R.string.place_add_comment),
-       					((EditText) mmAboutDialogView.findViewById(R.id.editText2)).getEditableText().toString()
-       			 ));         		 
-         		
-            	 addObject(obj);            	 
-             }
-         });
-         
-         
-          
-          mAboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-          mAboutDialog.setContentView(mmAboutDialogView);
-         
-          mAboutDialog.show();
+		 
 		
 	 }
 	
 	@Click(R.id.nearButton)
 	 void searchNear()
 	 {				
-		getNearObjects( map.getCameraPosition().target, map.getProjection().getVisibleRegion().latLngBounds);
+		
+		getNearObjects( map.getCameraPosition().target, map.getProjection().getVisibleRegion().latLngBounds,true);
 		webApi.setSettings(getApplicationContext(), "latitude",""+map.getCameraPosition().target.latitude);
 		webApi.setSettings(getApplicationContext(), "longitude",""+map.getCameraPosition().target.longitude);	
-				
+		
 	 }
 	
 	
@@ -690,6 +820,47 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
                 }
          });
          
+         ((ImageButton) mNearDialogView.findViewById(R.id.searchSearchDialog)).setOnClickListener(new OnClickListener() {
+             public void onClick(View v) {
+             	mNearDialog.cancel();
+             	
+             	
+             	String textLocation = webApi.getPrefixByPosition( map.getCameraPosition().target.latitude, map.getCameraPosition().target.longitude);
+             	
+	         	if(textLocation!=null)
+	         	{
+	             	Geocoder geoCoder = new Geocoder(MainActivity.this, Locale.getDefault());
+	             	 try {
+		             	 
+	             		 double reg[]=webApi.getRegion(textLocation);	             				 
+	             		
+	             		 //List<Address> addresses = geoCoder.getFromLocationName( ((EditText) mNearDialogView.findViewById(R.id.textEditDialog)).getText().toString(), 5);
+
+	             		List<Address> addresses = geoCoder.getFromLocationName (((EditText) mNearDialogView.findViewById(R.id.textEditDialog)).getText().toString(), 1, reg[0], reg[3], reg[1], reg[2]);
+		             	 
+		             	 if (addresses.size() > 0) {
+		             		 
+		             		 		 CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(
+					             			 addresses.get(0).getLatitude(),
+					    	             	 addresses.get(0).getLongitude()
+			             			 ));
+			             			 CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+				
+					                 map.moveCamera(center);
+					                 map.animateCamera(zoom);				                 
+		             		 
+		             	 }
+	             	 } catch (IOException e) {
+	             	 
+	             	 }
+	             	
+	             }
+	             }
+         });
+         
+         
+         /*
+         
          ((EditText) mNearDialogView.findViewById(R.id.textEditDialog)).addTextChangedListener(new TextWatcher(){
              public void afterTextChanged(Editable s) {
                  
@@ -709,7 +880,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
              public void beforeTextChanged(CharSequence s, int start, int count, int after){}
              public void onTextChanged(CharSequence s, int start, int before, int count){}
          }); 
-         
+         */
          
          mNearDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         
@@ -954,6 +1125,22 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
         
          mMenuDialog.show();
 	 }
+
+	@Override
+	public void onMarkerDrag(Marker arg0) {
+				
+	}
+
+	@Override
+	public void onMarkerDragEnd(Marker arg0) {
+		ShowAddObjectDialog(arg0);
+		//draggMarker = null;
+	}
+
+	@Override
+	public void onMarkerDragStart(Marker arg0) {
+		draggMarker = arg0;
+	}
 		
 
 	

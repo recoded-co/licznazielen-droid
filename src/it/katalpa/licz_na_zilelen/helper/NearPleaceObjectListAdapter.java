@@ -72,7 +72,7 @@ public class NearPleaceObjectListAdapter extends ArrayAdapter<PleaceObject> {
           mp.put("2",R.id.imageView4);
           mp.put("3",R.id.imageView3);
           mp.put("4",R.id.imageView2);
-          mp.put("5",R.id.imageView1);
+          mp.put("5",R.id.imageRadar2);
           
           ImageView imgView;
           

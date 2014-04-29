@@ -5,160 +5,189 @@
     android:layout_height="fill_parent" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/whitecolor"
-            android:orientation="vertical"
-            android:paddingBottom="10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="10dp" >
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
             <RelativeLayout
+                android:id="@+id/headerDialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/white_btn_selector"
                 android:paddingBottom="5dp"
-                android:paddingTop="5dp" >
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="10dp" >
 
+                    <TextView
+                        android:id="@+id/objtextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:text="@string/add_green_string"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </RelativeLayout>
+            
+			<ScrollView
+			    android:id="@+id/SCROLLER_ID"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_above="@+id/buttonSave"
+			    android:layout_below="@+id/headerDialog"
+			    android:fillViewport="true"
+			    android:fadeScrollbars="false"
+			    android:scrollbars="vertical" >
+           			
+			     <LinearLayout
+			         android:layout_width="match_parent"
+			         android:layout_height="wrap_content"
+			         android:background="@color/whitecolor"
+			         android:orientation="vertical"
+			         android:paddingBottom="10dp"
+			         android:paddingLeft="15dp"
+			         android:paddingRight="15dp" >
+                
                 <TextView
-                    android:id="@+id/objtextView"
+                    android:id="@+id/textView1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:text="@string/add_green_string"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:paddingBottom="5dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/add_pls_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_14"
+                    android:textStyle="bold" />
 
-            </RelativeLayout>
+                <EditText
+                    android:id="@+id/editText1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/editbox"
+                    android:ems="10"
+                    android:padding="3dp"
+                    android:textColor="@color/font_color" >
 
-            <TextView
-                android:id="@+id/textView1"
+                    <requestFocus />
+                </EditText>
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/how_spend_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_14"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/checkBox1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox"
+                    android:drawablePadding="2dp"
+                    android:paddingBottom="2dp"
+                    android:text="@string/act_force_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_13" />
+
+                <CheckBox
+                    android:id="@+id/checkBox2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox"
+                    android:drawablePadding="2dp"
+                    android:paddingBottom="2dp"
+                    android:text="@string/relax_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_13" />
+
+                <CheckBox
+                    android:id="@+id/checkBox3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox"
+                    android:drawablePadding="2dp"
+                    android:paddingBottom="2dp"
+                    android:text="@string/watch_nature_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_13" />
+
+                <CheckBox
+                    android:id="@+id/checkBox4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox"
+                    android:drawablePadding="2dp"
+                    android:paddingBottom="2dp"
+                    android:text="@string/children_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_13" />
+
+                <CheckBox
+                    android:id="@+id/checkBox5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox"
+                    android:drawablePadding="2dp"
+                    android:paddingBottom="2dp"
+                    android:text="@string/mettings_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_13" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/why_spend_string"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/fs_14"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/editText2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/editbox"
+                    android:ems="10"
+                    android:padding="3dp"
+                    android:textColor="@color/font_color" />
+            </LinearLayout>
+			    
+			    
+			</ScrollView>
+
+            <Button
+                android:id="@+id/buttonSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingTop="10dp"
-                android:text="@string/add_pls_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_14"
-                android:textStyle="bold" />
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/ok_btn_selector"
+                android:minHeight="48dp"
+                android:text="@string/save_string"
+                android:textColor="@color/whitecolor" />
 
-            <EditText
-                android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/editbox"
-                android:ems="10"
-                android:padding="3dp"
-                android:textColor="@color/font_color" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingTop="10dp"
-                android:text="@string/how_spend_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_14"
-                android:textStyle="bold" />
-
-            <CheckBox
-                android:id="@+id/checkBox1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:button="@drawable/checkbox"
-                android:paddingBottom="2dp"
-                android:drawablePadding="2dp"                
-                android:text="@string/act_force_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_13" />
-
-            <CheckBox
-                android:id="@+id/checkBox2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:button="@drawable/checkbox"
-                android:paddingBottom="2dp"
-                android:drawablePadding="2dp"
-                android:text="@string/relax_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_13" />
-
-            <CheckBox
-                android:id="@+id/checkBox3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:button="@drawable/checkbox"
-                android:paddingBottom="2dp"
-                android:drawablePadding="2dp"
-                android:text="@string/watch_nature_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_13" />
-
-            <CheckBox
-                android:id="@+id/checkBox4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:button="@drawable/checkbox"
-                android:paddingBottom="2dp"
-                android:drawablePadding="2dp"
-                android:text="@string/children_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_13" />
-
-            <CheckBox
-                android:id="@+id/checkBox5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:button="@drawable/checkbox"
-                android:paddingBottom="2dp"
-                android:drawablePadding="2dp"
-                android:text="@string/mettings_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_13" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingTop="10dp"
-                android:text="@string/why_spend_string"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/fs_14"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/editText2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/editbox"
-                android:ems="10"
-                android:padding="3dp"
-                android:textColor="@color/font_color" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/buttonSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ok_btn_selector"
-            android:text="@string/save_string"
-            android:minHeight="48dp"
-            android:textColor="@color/whitecolor" />
+        </RelativeLayout>
 
     </LinearLayout>
 

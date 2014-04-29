@@ -14,11 +14,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/imageView1"
+        android:layout_toRightOf="@+id/imageRadar2"
         android:paddingLeft="5dp" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/imageRadar2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

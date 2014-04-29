@@ -56,7 +56,7 @@
 	     android:padding="10dp" >
 	        
 	        <ImageView
-	            android:id="@+id/imageView1"
+	            android:id="@+id/imageRadar2"
 	            android:layout_width="match_parent"
 	            android:layout_height="match_parent"
 	            android:src="@drawable/bcg_splash" />	        

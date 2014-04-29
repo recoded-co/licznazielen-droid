@@ -36,9 +36,47 @@ import com.google.inject.Singleton;
 public class RealWebApiService implements WebApiService {
 
 	@Override
+	public String getPrefixByPosition(double lat,double lon)
+	{
+		
+		double x1 = 15.6011163;
+		double x2 = 18.2948956;
+		double x3 = 20.0784373;
+		double x4 = 22.2100081;
+		double x5 = 19.2992967;
+		double x6 = 20.4326486;
+		double y1 = 53.4758863;
+		double y2 = 50.8093207;
+		double y3 = 49.6864208;
+		
+		if (lat < y3 || lat > y1)
+            return "";
+        if (lat > y2){
+            if (lon < x1 || lon > x4)
+                return "";
+            if (lon < x2)
+                return "beta";
+            if (lon < x3)
+                return "lodz";
+            if (lon < x4)
+                return "warszawa";
+        }else{
+            if (lon < x6 || lon > x5)
+                return "krakow";
+            else
+                return null;
+        }
+        return null;
+	}
+	
+	@Override
 	public List<PleaceObject> getNearObjects(String prefix,double latitude, double longitude) {
 
-			
+		prefix = getPrefixByPosition(latitude,longitude);
+				
+		if(prefix==null)
+			return null;
+		
 		final String url = "http://"+prefix+".licznazielen.pl/geocache/search/geo/?polygon={lo}";
 		List<PleaceObject> list = new ArrayList<PleaceObject>();
 		RestTemplate restTemplate = new RestTemplate();
@@ -310,6 +348,46 @@ public class RealWebApiService implements WebApiService {
 		
 		
 		return list;
+	}
+
+	@Override
+	public double[] getRegion(String prefix) {
+		double[] reg= new double[4];
+		
+		if(prefix.equals("beta"))
+		{
+			reg[0]=52.20529295087437;
+			reg[1]=52.621027546435755;
+			reg[2]=17.252853848040104;
+			reg[3]=16.78489051759243;
+		}
+		
+		if(prefix.equals("lodz"))
+    	{
+			reg[0]=51.67198689093647;
+			reg[1]=51.838442515129685;
+			reg[2]=19.5498376339674;
+			reg[3]=19.36521414667368;	
+    	}
+		
+		if(prefix.equals("warszawa"))
+    	{
+			reg[0]=52.00495333617714;
+			reg[1]=52.4020592632483;
+			reg[2]=21.23726561665535;
+			reg[3]=20.792383700609207;
+    	}
+		
+		if(prefix.equals("krakow"))
+    	{
+			reg[0]=49.97333361884823;
+			reg[1]=50.14771277578873;
+			reg[2]=20.045531652867794;
+			reg[3]=19.859035313129425;
+    	}
+		
+		
+		return reg;
 	}
 
 	
