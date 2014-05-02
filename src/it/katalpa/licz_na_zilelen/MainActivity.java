@@ -37,6 +37,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -59,6 +60,7 @@ import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.RoboGuice;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
+
 import it.katalpa.licz_na_zilelen.R;
 import it.katalpa.licz_na_zilelen.helper.FavPleaceObjectListAdapter;
 import it.katalpa.licz_na_zilelen.helper.NearPleaceObjectListAdapter;
@@ -148,14 +150,15 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	    			it.getDoubleExtra("Longitude",Double.parseDouble(webApi.getSettings(getApplicationContext(), "longitude","52.2430")))
 	    		);
 	    
-	    getNearObjects( map.getCameraPosition().target, map.getProjection().getVisibleRegion().latLngBounds,false);
-	    
+	   
 	    CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
 	    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 
         map.moveCamera(center);
         map.animateCamera(zoom);
         
+        getNearObjects( map.getCameraPosition().target, map.getProjection().getVisibleRegion().latLngBounds,false);
+	    
         map.setOnMarkerDragListener(this);
         
         isSatView = Boolean.parseBoolean(webApi.getSettings(getApplicationContext(), "satelite", "false"));
@@ -166,7 +169,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
         
         
         //if(isFavView)
-        	ShowFavoriteOnMap(true);
+        //	ShowFavoriteOnMap(true);
         
         
         if(apiPrefix.isEmpty())
@@ -196,18 +199,32 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
         */
 	}
 	
-	private void ShowFavoriteOnMap(boolean isShow)
+	@UiThread
+	public void ShowFavoriteOnMap(boolean isShow)
 	{
 		
 		if(isShow)
 		{			
 			favObjects = webApi.getFavoriteObject(getApplicationContext());
+			for (PleaceObject obs : favObjects) {	
+				PleaceObject near = null;
+				if((near = IsInNearObject(obs.getId()))==null)
+			      addMarkerToMap(obs,2);
+				else
+					near.getMarker().setIcon(BitmapDescriptorFactory.fromResource(markersColor[2]));
+			}	
+			
+		}else{	
+			if(favObjects!= null)
 			for (PleaceObject obs : favObjects) {
-			      addMarkerToMap(obs,2);			      
-			}			
-		}else{		
-			for (PleaceObject obs : favObjects) {
-		       obs.getMarker().remove();
+				PleaceObject near = null;
+				if((near = IsInNearObject(obs.getId()))==null){
+					obs.getMarker().remove();
+					Log.v("dupa","favObjects");
+				}else{
+					Log.v("dupa","PleaceObject");
+					near.getMarker().setIcon(BitmapDescriptorFactory.fromResource(markersColor[1]));
+				}
 		    }
 			favObjects = null;
 		}
@@ -243,6 +260,18 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		
 		
 	    return null; 
+	}
+	
+	
+	public PleaceObject IsInNearObject(int iObjId)
+	{
+		if(nearObjects!= null)
+		    for (PleaceObject obs : nearObjects) {
+		        if (iObjId==obs.getId()) {
+		            return obs;
+		        }
+		    }
+		return null;
 	}
 	
 	
@@ -397,18 +426,29 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	void ShowObjectDialog(final PleaceObject obj)
 	{
 		
+		
+		LatLng position = new LatLng(
+    			obj.getLatitude(), 
+    			obj.getLongitude()
+    		);
+    
+		CameraUpdate center = CameraUpdateFactory.newLatLng(position);
+		map.moveCamera(center);
+		CameraUpdateFactory.zoomTo(15);
+		
+		
 		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
 
 		double delta = visibleRegion.latLngBounds.northeast.latitude-visibleRegion.latLngBounds.southwest.latitude;
 		delta = Math.abs(delta)/4;
 		
 		
-		LatLng position = new LatLng(
+		position = new LatLng(
     			obj.getLatitude()-delta, 
     			obj.getLongitude()
     		);
     
-		CameraUpdate center = CameraUpdateFactory.newLatLng(position);
+		center = CameraUpdateFactory.newLatLng(position);
 
 		map.moveCamera(center);
 		
@@ -433,11 +473,17 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
             	 {
             		 favButton.setImageResource(R.drawable.heart_ico_active);
             		 ShowFlashMessage(0, getApplicationContext().getResources().getString(R.string.fav_add));
+            	 
+            		 
+            	 
             	 }else{
             		 favButton.setImageResource(R.drawable.heart_ico);
             		 webApi.deleteFavorite(getApplicationContext(), obj);
             		 ShowFlashMessage(0, getApplicationContext().getResources().getString(R.string.fav_del));
             	 }  
+            	 
+            	 ShowFavoriteOnMap(false);
+            	 ShowFavoriteOnMap(true);
              }
          });
          
@@ -567,8 +613,11 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	{
 		if(sh)
 		{
+			
 			if(progressDialog==null)
 			{				
+				
+				Log.v("duda","progressDialog");
 				progressDialog = new Dialog(MainActivity.this,R.style.AboutTheme);
 
 		        RelativeLayout mmAboutDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.dialog_progress, null);
@@ -585,8 +634,13 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		        progressDialog.show();
 			}
 		}else{
+			
 			if(progressDialog!=null)
+			{
 				progressDialog.cancel();
+			}
+			progressDialog=null;
+			
 		}
 	}
 	
@@ -600,6 +654,13 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		ClearMarkers();
 		
 		nearObjects =  webApi.getNearObjects(apiPrefix,ll.latitude,ll.longitude);
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if(nearObjects==null)
 		{
@@ -631,6 +692,10 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 			}
 		
 		}
+		
+		ShowFavoriteOnMap(false);
+		ShowFavoriteOnMap(true);
+		
 		ShowProgressDialog(false);
 	}
 	
@@ -663,18 +728,28 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	private void ShowAddObjectDialog(final Marker dMarker)
 	{
 		
-		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
-
-		double delta = visibleRegion.latLngBounds.northeast.latitude-visibleRegion.latLngBounds.southwest.latitude;
-		delta = Math.abs(delta)/4;
-		
-		
 		LatLng position = new LatLng(
-				dMarker.getPosition().latitude-delta, 
+				dMarker.getPosition().latitude, 
 				dMarker.getPosition().longitude
     		);
     
 		CameraUpdate center = CameraUpdateFactory.newLatLng(position);
+		map.moveCamera(center);
+		CameraUpdateFactory.zoomTo(15);
+		
+		
+		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
+
+		double delta = visibleRegion.latLngBounds.northeast.latitude-visibleRegion.latLngBounds.southwest.latitude;
+		delta = Math.abs(delta)/4+ Math.abs(delta)/8;
+		
+		
+		position = new LatLng(
+				dMarker.getPosition().latitude-delta, 
+				dMarker.getPosition().longitude
+    		);
+    
+		center = CameraUpdateFactory.newLatLng(position);
 
 		map.moveCamera(center);
 		

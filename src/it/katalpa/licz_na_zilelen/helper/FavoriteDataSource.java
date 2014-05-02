@@ -112,6 +112,9 @@ public class FavoriteDataSource {
 
 	  public PleaceObject getFavoriteByObjId(int iId) {
 		 
+		  if(iId==0)
+			  return null;
+		  
 		  Cursor cursor = database.query(DatabaseHelper.TABLE_NAME_FAV, allColumns
 		    		,DatabaseHelper.COLUMN_FAV_OBJID + "=?", new String[] { ""+iId }, null, null, null, null); 
 		  

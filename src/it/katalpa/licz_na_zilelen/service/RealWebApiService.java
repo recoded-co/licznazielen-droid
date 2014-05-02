@@ -229,6 +229,8 @@ public class RealWebApiService implements WebApiService {
 
 		final JSONObject jsonObject = new JSONObject();
        
+		
+		
         try {
         	/*
         	JSONArray array = new JSONArray();
@@ -296,15 +298,19 @@ public class RealWebApiService implements WebApiService {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
             final JSONObject responseJSONObject = new JSONObject(response.getBody());
             
-            //Log.v("duda","lo: "+responseJSONObject.toString());
+            //Log.v("duda","server: "+responseJSONObject.toString());
             
             return true;
             
         } catch (JSONException e) { 
+        	//Log.v("duda","JSONException: "+e.getMessage());
         	//throw new InternalException("Bad json.", e);
         } catch (RestClientException e) {
+        //	e.printStackTrace();
+        	//Log.v("duda","RestClientException: "+e.getMessage());
         	 // throw new InternalException("Error server", e);
         } catch (IllegalArgumentException e) {
+        //	Log.v("duda","IllegalArgumentException: "+e.getMessage());
         	// throw new InternalException("Invalid argument exception.", e);
         }
 

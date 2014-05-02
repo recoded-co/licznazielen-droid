@@ -16,7 +16,7 @@ public class PleaceObject implements Comparable<PleaceObject> {
 	private String sName;
 	private boolean iFavorite = false;
 	private boolean iMyObject = false;
-	private int iId;	
+	private int iId = 0;	
 	private double fDistance;
 	private int iPopularity;
 	private double dLatitude;
