@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	  private static final String LOG = "DatabaseHelper";
 	
 	  private static final String DATABASE_NAME = "fav_data.db";
-	  private static final int DATABASE_VERSION = 3;	  
+	  private static final int DATABASE_VERSION = 5;	  
 	  
 	  public static final String TABLE_NAME_FAV = "FavoriteList";	  
 	  

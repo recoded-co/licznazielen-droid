@@ -135,7 +135,11 @@ public class RealWebApiService implements WebApiService {
 	public void deleteFavorite(Context context,PleaceObject fav) {
 		FavoriteDataSource oWblds = new FavoriteDataSource(context);
 		oWblds.open();
-		oWblds.deleteFavorite(fav.getId());
+		if(fav.getId()!=0)
+			oWblds.deleteFavoriteByObjId(fav.getId());
+		else
+			oWblds.deleteFavorite(fav.getDataBaseId());
+		fav.setDataBaseId(0);
 		oWblds.close();
 	}
 

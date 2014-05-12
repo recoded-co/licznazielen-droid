@@ -65,7 +65,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:background="@drawable/white2_btn_selector"
-                android:text="Cancel"
+                android:text="OK"
                 android:textColor="@color/gray_text" />
         </LinearLayout>
     </LinearLayout>

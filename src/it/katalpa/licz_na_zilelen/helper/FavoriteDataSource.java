@@ -50,7 +50,7 @@ public class FavoriteDataSource {
 		  
 		PleaceObject ctn = getFavoriteByObjId(obj.getId());
 		
-		if(ctn!=null)
+		if(ctn!=null || obj.getDataBaseId()!=0)
 			return null;
 		  
 		ContentValues values = new ContentValues();
@@ -104,12 +104,18 @@ public class FavoriteDataSource {
 	    return newComment;
 	  }
 
-	  public void deleteFavorite(int id) {
+	  public void deleteFavoriteByObjId(int id) {
 	   
 	    database.delete(DatabaseHelper.TABLE_NAME_FAV,DatabaseHelper.COLUMN_FAV_OBJID
 	        + " = " + id, null);
 	  }
 
+	  public void deleteFavorite(int id) {
+		   
+		    database.delete(DatabaseHelper.TABLE_NAME_FAV,DatabaseHelper.KEY_ID
+		        + " = " + id, null);
+		  }
+	  
 	  public PleaceObject getFavoriteByObjId(int iId) {
 		 
 		  if(iId==0)
@@ -148,12 +154,14 @@ public class FavoriteDataSource {
 
 	  private PleaceObject cursorToPleaceObject(Cursor cursor) {
 		  PleaceObject obj = new PleaceObject();
+		  obj.setDataBaseId(cursor.getInt(0));
 		  obj.setId(cursor.getInt(1));
 		  obj.setName(cursor.getString(2));
 		  obj.setLatitude(cursor.getDouble(3));
 		  obj.setLongitude(cursor.getDouble(4));
 		  obj.setPopularity(cursor.getInt(5));
 		  obj.setMyObject(cursor.getInt(6)==1);
+		  obj.setFavorite(true);
 		  
 		  String sText = cursor.getString(7);
 		  

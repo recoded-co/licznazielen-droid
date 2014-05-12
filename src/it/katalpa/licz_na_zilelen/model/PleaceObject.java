@@ -16,7 +16,8 @@ public class PleaceObject implements Comparable<PleaceObject> {
 	private String sName;
 	private boolean iFavorite = false;
 	private boolean iMyObject = false;
-	private int iId = 0;	
+	private int iId = 0;
+	private int iDataBaseId = 0;
 	private double fDistance;
 	private int iPopularity;
 	private double dLatitude;
@@ -168,7 +169,14 @@ public class PleaceObject implements Comparable<PleaceObject> {
     	iMyObject = fav;			
     }
 	
+    public int getDataBaseId() {
+    	return iDataBaseId;
+    }
 	
+    public void setDataBaseId(int id) {			
+    	iDataBaseId = id;			
+    }
+    
     public int getId() {			
 		return iId;			
     }
