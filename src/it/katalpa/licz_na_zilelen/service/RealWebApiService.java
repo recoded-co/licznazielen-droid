@@ -55,7 +55,7 @@ public class RealWebApiService implements WebApiService {
             if (lon < x1 || lon > x4)
                 return "";
             if (lon < x2)
-                return "beta";
+                return "poznan";
             if (lon < x3)
                 return "lodz";
             if (lon < x4)
