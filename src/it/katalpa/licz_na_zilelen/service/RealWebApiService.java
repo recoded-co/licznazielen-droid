@@ -24,11 +24,11 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import roboguice.util.Ln;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.inject.Singleton;
 
@@ -36,7 +36,7 @@ import com.google.inject.Singleton;
 public class RealWebApiService implements WebApiService {
 
 	@Override
-	public String getPrefixByPosition(double lat,double lon)
+	public String getPrefixByPosition(double lat, double lon)
 	{
 		
 		double x1 = 15.6011163;
@@ -55,7 +55,7 @@ public class RealWebApiService implements WebApiService {
             if (lon < x1 || lon > x4)
                 return "";
             if (lon < x2)
-                return "beta";
+                return "poznan";
             if (lon < x3)
                 return "lodz";
             if (lon < x4)
@@ -73,11 +73,14 @@ public class RealWebApiService implements WebApiService {
 	public List<PleaceObject> getNearObjects(String prefix,double latitude, double longitude) {
 
 		prefix = getPrefixByPosition(latitude,longitude);
-				
+		System.out.println(")))))))))))))");
+		System.out.println(prefix);
 		if(prefix==null)
 			return null;
 		
 		final String url = "http://"+prefix+".licznazielen.pl/geocache/search/geo/?polygon={lo}";
+		System.out.println(url);
+		
 		List<PleaceObject> list = new ArrayList<PleaceObject>();
 		RestTemplate restTemplate = new RestTemplate();
     	restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
@@ -85,7 +88,7 @@ public class RealWebApiService implements WebApiService {
     	try {
     		    	
 	    	String myObject = restTemplate.getForObject(url, String.class,"POINT ("+longitude+" "+latitude+")");
-    			    	
+	    	System.out.println("POINT ("+longitude+" "+latitude+")");
 	    	JSONObject jsonObject = new JSONObject(myObject);
 	    	
     		 if(jsonObject.getBoolean("success"))
@@ -330,7 +333,7 @@ public class RealWebApiService implements WebApiService {
 		oWblds.close();
 		return oContact;
 	}
-
+/*
 	@Override
 	public String getPrefix(double latitude,double longitude) {		
 		
@@ -359,7 +362,7 @@ public class RealWebApiService implements WebApiService {
 		
 		return list;
 	}
-
+*/
 	@Override
 	public double[] getRegion(String prefix) {
 		double[] reg= new double[4];

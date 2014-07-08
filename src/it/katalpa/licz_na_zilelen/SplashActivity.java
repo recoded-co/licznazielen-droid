@@ -113,7 +113,7 @@ public class SplashActivity extends Activity implements LocationListener{
 		{
 			intent.putExtra("Latitude", loc.getLatitude());
 			intent.putExtra("Longitude", loc.getLongitude());
-			intent.putExtra("prefix", webApi.getPrefix(loc.getLatitude(),loc.getLongitude()));
+			intent.putExtra("prefix", webApi.getPrefixByPosition(loc.getLatitude(),loc.getLongitude()));
 		}else{
 			intent.putExtra("hasError", true);
 			intent.putExtra("prefix","");
