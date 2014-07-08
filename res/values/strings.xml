@@ -3,12 +3,12 @@
 
     <string name="app_name">Licz na zieleń</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>   
+    <string name="hello_world">Hello world!</string>
     <string name="signin_quit">Zamykanie aplikacji</string>
     <string name="signin_really_quit">Czy zamknąć aplikacje?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
-    <string name="empty"> </string>
+    <string name="empty"></string>
     <string name="error_connection">Brak połączenia z Internetem</string>
     <string name="error_server">Ooops.. coś poszło ni etak</string>
     <string name="wait_loacal">Określamy Twoją lokalizację...</string>
@@ -31,12 +31,12 @@
     <string name="children_string">spędzanie czasu z dziećmi</string>
     <string name="mettings_string">spotkania ze znajomymi i rodziną</string>
     <string name="about_text_string">
-    <![CDATA[Aplikacja powstała w ramach projektu “Licz na zieleń” Fundacji Sendzimira. Dane na temat miejsc w otoczeniu zieleni zostały zebrane od mieszkańców  Krakowa, Łodzi, Poznania i Warszawy. Jeśli chcesz wziąć udział w badaniu, zapraszamy na <br><a href="http://www.licznazielen.pl">www.licznazielen.pl</a>.
+<![CDATA[Aplikacja powstała w ramach projektu “Licz na zieleń” Fundacji Sendzimira. Dane na temat miejsc w otoczeniu zieleni zostały zebrane od mieszkańców  Krakowa, Łodzi, Poznania i Warszawy. Jeśli chcesz wziąć udział w badaniu, zapraszamy na <br><a href="http://www.licznazielen.pl">www.licznazielen.pl</a>.
 <br><br>
 Przyroda w mieście to fascynujący temat. Dowiedz się więcej na <br><a href="http://www.uslugiekosystemow.pl">www.uslugiekosystemow.pl</a>
 <br><br>
 Projekt “Licz na zieleń” współfinansowany przez Szwajcarię w ramach szwajcarskiego programu współpracy z nowymi krajami członkowskimi Unii Europejskiej.]]>
-   </string>
+    </string>
     <string name="add_green_string">dodaj miejsce spędzania czasu w otoczeniu zieleni</string>
     <string name="im_sorry_string">Przykro nam</string>
     <string name="innfo_txt">"W Twoim otoczeniu nie znaleźliśmy żadnych miejsc "</string>
@@ -45,7 +45,6 @@ Projekt “Licz na zieleń” współfinansowany przez Szwajcarię w ramach szwa
     <string name="how_spend_string">W jaki sposób spędzasz czas w tym miejscu?</string>
     <string name="why_spend_string">Jakie cechy tego miejsca sprawiają, że chętnie spędzasz w nim czas?</string>
     <string name="save_string">zapisz</string>
-    
     <string name="fav_add">Obiekt został dodany do Twojej listy ulubionych miejsc</string>
     <string name="fav_del">Obiekt został usunięty z listy Twoich ulubionych miejsc</string>
     <string name="fav_0">Nie masz jeszcze ulubionych miejsc</string>
@@ -56,4 +55,6 @@ Projekt “Licz na zieleń” współfinansowany przez Szwajcarię w ramach szwa
     <string name="no_signal">Twoj obszar nie jest obsługiwany przez aplikacje</string>
     <string name="wait_search">trwa wyszukiwanie...</string>
     <string name="hold_marker">Przytrzymaj marker w celu ustalenia dokładnej lokalizacji.</string>
+    <string name="title_activity_main2222">MainActivity</string>
+
 </resources>

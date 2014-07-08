@@ -74,9 +74,9 @@ import it.katalpa.licz_na_zilelen.model.PleaceObject.ComentsMap;
 import it.katalpa.licz_na_zilelen.service.WebApiService;
 
 /**
-*
-* @coded by katalpa.it
-*/
+ *
+ * @coded by katalpa.it
+ */
 
 
 @NoTitle
@@ -149,11 +149,9 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	    hasError = it.hasExtra("hasError");
 	    apiPrefix = it.getStringExtra("prefix");
 	    
-	    
-	    
 	    myPosition = new LatLng(
-	    			it.getDoubleExtra("Latitude",Double.parseDouble(webApi.getSettings(getApplicationContext(), "latitude","16.5603"))), 
-	    			it.getDoubleExtra("Longitude",Double.parseDouble(webApi.getSettings(getApplicationContext(), "longitude","52.2430")))
+	    			it.getDoubleExtra("Latitude", Double.parseDouble(webApi.getSettings(getApplicationContext(), "latitude","52.2327277"))), 
+	    			it.getDoubleExtra("Longitude", Double.parseDouble(webApi.getSettings(getApplicationContext(), "longitude","21.0129143")))
 	    		);
 	    
 	   
@@ -172,7 +170,8 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
         
         if(isSatView)
         	map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);        
-               
+        
+        apiPrefix = webApi.getPrefixByPosition(myPosition.latitude, myPosition.longitude);       
         if(apiPrefix.isEmpty())
         {
         	buttonSearch.setEnabled(false);
