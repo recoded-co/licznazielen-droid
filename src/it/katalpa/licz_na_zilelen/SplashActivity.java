@@ -1,20 +1,7 @@
 package it.katalpa.licz_na_zilelen;
-/**
-*
-* @coded by katalpa.it
-*/
-import it.katalpa.licz_na_zilelen.service.WebApiService;
+
 import roboguice.util.Ln;
-
-import com.google.inject.Inject;
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.Background;
-import com.googlecode.androidannotations.annotations.EActivity;
-import com.googlecode.androidannotations.annotations.Fullscreen;
-import com.googlecode.androidannotations.annotations.NoTitle;
-import com.googlecode.androidannotations.annotations.RoboGuice;
-import com.googlecode.androidannotations.annotations.ViewById;
-
+import it.katalpa.licz_na_zilelen.service.WebApiService;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Criteria;
@@ -22,12 +9,23 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.inject.Inject;
+import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Background;
+import com.googlecode.androidannotations.annotations.EActivity;
+import com.googlecode.androidannotations.annotations.NoTitle;
+import com.googlecode.androidannotations.annotations.RoboGuice;
+import com.googlecode.androidannotations.annotations.ViewById;
+
+/**
+*
+* @coded by katalpa.it
+*/
 
 @NoTitle
 @EActivity(R.layout.activity_splash)
@@ -49,17 +47,17 @@ public class SplashActivity extends Activity implements LocationListener{
 	
 	@AfterViews
 	void initConf() {
-		
+		System.out.println("initConf");
 		Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate);
 		imageRadar.startAnimation(animation);
-		
+		System.out.println("imageRadar");
 		service = (LocationManager) getSystemService(LOCATION_SERVICE);
-		
+		System.out.println("service");
 		Criteria criteria = new Criteria();
 		provider = service.getBestProvider(criteria, true);
 	    Location location = service.getLastKnownLocation(provider);		
-		
-		boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		System.out.println("location:"+location);
+		//boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
 			/*	
 		if (!enabled) {
 			  Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -68,9 +66,11 @@ public class SplashActivity extends Activity implements LocationListener{
 			*/		
 			
 			if (location != null) {
+				System.out.println("location is null");
 			    onLocationChanged(location);
 				//runInBackground(true,location);
 			}else{
+				System.out.println("else, there is location");
 				runInBackground(false,location);
 			}
 

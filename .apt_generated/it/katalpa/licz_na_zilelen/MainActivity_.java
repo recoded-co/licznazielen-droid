@@ -77,18 +77,18 @@ public final class MainActivity_
         scope_.injectViews();
         eventManager_.fire(new OnContentViewAvailableEvent());
         nearButton = ((Button) findViewById(id.nearButton));
-        headerText = ((TextView) findViewById(id.headerText));
         buttonSearch = ((ImageButton) findViewById(id.buttonSearch));
         addButton = ((Button) findViewById(id.addButton));
+        headerText = ((TextView) findViewById(id.headerText));
         {
-            View view = findViewById(id.buttonSearch);
+            View view = findViewById(id.addButton);
             if (view!= null) {
                 view.setOnClickListener(new OnClickListener() {
 
 
                     @Override
                     public void onClick(View view) {
-                        MainActivity_.this.showSearchDialog();
+                        MainActivity_.this.addObject();
                     }
 
                 }
@@ -126,14 +126,14 @@ public final class MainActivity_
             }
         }
         {
-            View view = findViewById(id.addButton);
+            View view = findViewById(id.buttonSearch);
             if (view!= null) {
                 view.setOnClickListener(new OnClickListener() {
 
 
                     @Override
                     public void onClick(View view) {
-                        MainActivity_.this.addObject();
+                        MainActivity_.this.showSearchDialog();
                     }
 
                 }
@@ -268,14 +268,50 @@ public final class MainActivity_
     }
 
     @Override
-    public void ClearMarkers() {
+    public void ShowProgressDialog(final boolean sh) {
         handler_.post(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    MainActivity_.super.ClearMarkers();
+                    MainActivity_.super.ShowProgressDialog(sh);
+                } catch (RuntimeException e) {
+                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void ShowNotFoundDialog() {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    MainActivity_.super.ShowNotFoundDialog();
+                } catch (RuntimeException e) {
+                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void ShowFavoriteOnMap(final boolean isShow) {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    MainActivity_.super.ShowFavoriteOnMap(isShow);
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -304,24 +340,6 @@ public final class MainActivity_
     }
 
     @Override
-    public void reAddMarkerToMap(final PleaceObject po, final int i) {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    MainActivity_.super.reAddMarkerToMap(po, i);
-                } catch (RuntimeException e) {
-                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
-    }
-
-    @Override
     public void ShowFlashMessageEx(final int i, final boolean sn) {
         handler_.post(new Runnable() {
 
@@ -340,14 +358,14 @@ public final class MainActivity_
     }
 
     @Override
-    public void ShowNearDialog(final List<PleaceObject> aObjectList) {
+    public void addMarkerToMap(final PleaceObject po, final int i) {
         handler_.post(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    MainActivity_.super.ShowNearDialog(aObjectList);
+                    MainActivity_.super.addMarkerToMap(po, i);
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -358,14 +376,14 @@ public final class MainActivity_
     }
 
     @Override
-    public void ShowFavoriteOnMap(final boolean isShow) {
+    public void ClearMarkers() {
         handler_.post(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    MainActivity_.super.ShowFavoriteOnMap(isShow);
+                    MainActivity_.super.ClearMarkers();
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -412,14 +430,14 @@ public final class MainActivity_
     }
 
     @Override
-    public void ShowProgressDialog(final boolean sh) {
+    public void ShowNearDialog(final List<PleaceObject> aObjectList) {
         handler_.post(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    MainActivity_.super.ShowProgressDialog(sh);
+                    MainActivity_.super.ShowNearDialog(aObjectList);
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -430,32 +448,14 @@ public final class MainActivity_
     }
 
     @Override
-    public void ShowNotFoundDialog() {
+    public void reAddMarkerToMap(final PleaceObject po, final int i) {
         handler_.post(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    MainActivity_.super.ShowNotFoundDialog();
-                } catch (RuntimeException e) {
-                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
-    }
-
-    @Override
-    public void addMarkerToMap(final PleaceObject po, final int i) {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    MainActivity_.super.addMarkerToMap(po, i);
+                    MainActivity_.super.reAddMarkerToMap(po, i);
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
