@@ -48,7 +48,6 @@ public class RealWebApiService implements WebApiService {
 		double y1 = 53.4758863;
 		double y2 = 50.8093207;
 		double y3 = 49.6864208;
-		
 		if (lat < y3 || lat > y1)
             return "";
         if (lat > y2){
@@ -64,17 +63,15 @@ public class RealWebApiService implements WebApiService {
             if (lon < x6 || lon > x5)
                 return "krakow";
             else
-                return null;
+                return "";
         }
-        return null;
+        return "";
 	}
 	
 	@Override
 	public List<PleaceObject> getNearObjects(String prefix,double latitude, double longitude) {
-
+		System.out.println(">>>>>>>>>>");
 		prefix = getPrefixByPosition(latitude,longitude);
-		System.out.println(")))))))))))))");
-		System.out.println(prefix);
 		if(prefix==null)
 			return null;
 		

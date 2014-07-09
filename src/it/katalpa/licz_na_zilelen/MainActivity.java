@@ -1,5 +1,11 @@
 package it.katalpa.licz_na_zilelen;
 
+import it.katalpa.licz_na_zilelen.helper.FavPleaceObjectListAdapter;
+import it.katalpa.licz_na_zilelen.helper.NearPleaceObjectListAdapter;
+import it.katalpa.licz_na_zilelen.helper.SearchPleaceObjectListAdapter;
+import it.katalpa.licz_na_zilelen.model.PleaceObject;
+import it.katalpa.licz_na_zilelen.model.PleaceObject.ComentsMap;
+import it.katalpa.licz_na_zilelen.service.WebApiService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,19 +23,15 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
 import android.text.Html;
-import android.text.method.KeyListener;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.EditorInfo;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -39,7 +41,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -49,6 +50,7 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -64,14 +66,6 @@ import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.RoboGuice;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
-
-import it.katalpa.licz_na_zilelen.R;
-import it.katalpa.licz_na_zilelen.helper.FavPleaceObjectListAdapter;
-import it.katalpa.licz_na_zilelen.helper.NearPleaceObjectListAdapter;
-import it.katalpa.licz_na_zilelen.helper.SearchPleaceObjectListAdapter;
-import it.katalpa.licz_na_zilelen.model.PleaceObject;
-import it.katalpa.licz_na_zilelen.model.PleaceObject.ComentsMap;
-import it.katalpa.licz_na_zilelen.service.WebApiService;
 
 /**
  *
@@ -153,14 +147,26 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 	    			it.getDoubleExtra("Latitude", Double.parseDouble(webApi.getSettings(getApplicationContext(), "latitude","52.2327277"))), 
 	    			it.getDoubleExtra("Longitude", Double.parseDouble(webApi.getSettings(getApplicationContext(), "longitude","21.0129143")))
 	    		);
+	       
+	    //CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
+	    //CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+	    //map.animateCamera(zoom);
+        //map.moveCamera(center);
+	    /*
+	    CameraPosition cameraPosition = new CameraPosition.Builder()
+	        .target(myPosition)
+	        .zoom(15)          
+	        .build(); 
+	    map.animateCamera(CameraUpdateFactory.newCameraPosition(
+	        cameraPosition));
+	    */
 	    
-	   
-	    CameraUpdate center = CameraUpdateFactory.newLatLng(myPosition);
-	    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-
+        CameraUpdate center = CameraUpdateFactory.newCameraPosition(new CameraPosition(myPosition, 15, 0, 0));
         map.moveCamera(center);
-        map.animateCamera(zoom);
         
+        System.out.println(map.getCameraPosition());
+	    System.out.println(map.getCameraPosition().target.latitude);
+	    System.out.println(map.getCameraPosition().target.longitude);
         getNearObjects( map.getCameraPosition().target, map.getProjection().getVisibleRegion().latLngBounds,false);
 	    
         map.setOnMarkerDragListener(this);
@@ -171,7 +177,10 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
         if(isSatView)
         	map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);        
         
-        apiPrefix = webApi.getPrefixByPosition(myPosition.latitude, myPosition.longitude);       
+        apiPrefix = webApi.getPrefixByPosition(myPosition.latitude, myPosition.longitude);
+        
+        //Toast.makeText(getApplicationContext(), "("+myPosition+"),("+map.getCameraPosition().target.latitude+","+map.getCameraPosition().target.latitude+")", Toast.LENGTH_LONG).show();
+        
         if(apiPrefix.isEmpty())
         {
         	buttonSearch.setEnabled(false);
@@ -424,9 +433,8 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 		{
 			bounds.include(new LatLng(copy.get(i).getLatitude(), copy.get(i).getLongitude()));
 		}
-		
 		map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 50));
-				
+		//Toast.makeText(getApplicationContext(), "Odśwież:"+map.getCameraPosition().target.latitude+","+map.getCameraPosition().target.longitude, Toast.LENGTH_LONG);		
 	 }
 	
 	void ShowObjectDialog(final PleaceObject obj)
@@ -435,10 +443,11 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
     			obj.getLatitude(), 
     			obj.getLongitude()
     		);
-    
-		CameraUpdate center = CameraUpdateFactory.newLatLngZoom(position,fZoomLevel);
-		map.moveCamera(center);		
-		
+		CameraUpdate center = CameraUpdateFactory.newCameraPosition(new CameraPosition(position, fZoomLevel, 0, 0));
+		//CameraUpdate center = CameraUpdateFactory.newLatLngZoom(position,fZoomLevel);
+		map.moveCamera(center);	
+		System.out.println("!!!!!!!!!Dialog:"+map.getCameraPosition().target.latitude+","+map.getCameraPosition().target.longitude);
+		//Toast.makeText(getApplicationContext(), "Dialog:"+map.getCameraPosition().target.latitude+","+map.getCameraPosition().target.longitude, Toast.LENGTH_LONG);
 		
 		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
 
@@ -450,11 +459,11 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
     			obj.getLatitude()-delta, 
     			obj.getLongitude()
     		);
-    
-		center = CameraUpdateFactory.newLatLng(position);
+		center = CameraUpdateFactory.newCameraPosition(new CameraPosition(position, fZoomLevel, 0, 0));
+		//center = CameraUpdateFactory.newLatLng(position);
 		map.moveCamera(center);
-		
-		
+		System.out.println("!!!!!!!!!Dialog2:"+map.getCameraPosition().target.latitude+","+map.getCameraPosition().target.longitude);
+		//Toast.makeText(this, "Dialog2:"+map.getCameraPosition().target.latitude+","+map.getCameraPosition().target.longitude, Toast.LENGTH_LONG);	
 		headerText.setText(obj.getName());
 				
 		final Dialog mObjectDialog = new Dialog(this,R.style.SearchTheme);
@@ -736,7 +745,8 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 				dMarker.getPosition().longitude
     		);
     
-		CameraUpdate center = CameraUpdateFactory.newLatLngZoom(position,fZoomLevel);
+		CameraUpdate center = CameraUpdateFactory.newCameraPosition(new CameraPosition(position, fZoomLevel, 0, 0));
+		//CameraUpdate center = CameraUpdateFactory.newLatLngZoom(position,fZoomLevel);
 		map.moveCamera(center);	
 		
 		
@@ -751,8 +761,8 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
 				dMarker.getPosition().longitude
     		);
     
-		center = CameraUpdateFactory.newLatLng(position);
-
+		//center = CameraUpdateFactory.newLatLng(position);
+		center = CameraUpdateFactory.newCameraPosition(new CameraPosition(position, fZoomLevel, 0, 0));
 		map.moveCamera(center);
 		
 		
@@ -844,15 +854,20 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
          		List<Address> addresses = geoCoder.getFromLocationName (((EditText) mNearDialogView.findViewById(R.id.textEditDialog)).getText().toString(), 1, reg[0], reg[3], reg[1], reg[2]);
              	 
              	 if (addresses.size() > 0) {
-             		 
-             		 		 CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(
+             		 LatLng latlon = new LatLng(
+	             			 addresses.get(0).getLatitude(),
+	    	             	 addresses.get(0).getLongitude()
+             				 );
+             		 CameraUpdate center = CameraUpdateFactory.newCameraPosition(new CameraPosition(latlon, 15, 0, 0));
+             		 		/*	
+             		 		CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(
 			             			 addresses.get(0).getLatitude(),
 			    	             	 addresses.get(0).getLongitude()
 	             			 ));
 	             			 CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-		
-			                 map.moveCamera(center);
-			                 map.animateCamera(zoom);				                 
+							*/
+	                 map.moveCamera(center);
+	                 //map.animateCamera(zoom);				                 
              		 
              	 }
          	 } catch (IOException e) {
@@ -1051,7 +1066,7 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
                  webApi.setSettings(getApplicationContext(), "satelite", ""+isSatView);
                  
         		 if(isSatView)
-        	        map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        	        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         		 else
         			map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         		 
