@@ -1,7 +1,5 @@
 package pl.org.sendzimir.licznazielen;
 
-import it.katalpa.licz_na_zilelen.R;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -787,15 +785,8 @@ public class MainActivity extends FragmentActivity implements
 
 	private void executeGeoSerach(final RelativeLayout mNearDialogView) {
 		LatLng pos = map.getCameraPosition().target;
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("map lat long:" + pos.toString()).setTitle("debug");
-		AlertDialog dialog = builder.create();
-		// dialog.show();
-
 		String textLocation = webApi.getPrefixByPosition(pos.latitude,
 				pos.longitude);
-
 		Geocoder geoCoder = new Geocoder(MainActivity.this, Locale.getDefault());
 		try {
 			List<Address> addresses;
@@ -816,13 +807,7 @@ public class MainActivity extends FragmentActivity implements
 				map.moveCamera(center);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-			builder.setMessage(
-					"Niestety nie odnaleziono lokalizacji dla tego miejsca")
-					.setTitle("Geolokalizacja");
-			AlertDialog dialog2 = builder2.create();
-			dialog2.show();
+			// TODO notify user
 		}
 
 	}
@@ -852,7 +837,6 @@ public class MainActivity extends FragmentActivity implements
 
 					mNearDialog.cancel();
 					executeGeoSerach(mNearDialogView);
-
 					return true;
 				}
 				return false;
@@ -1063,7 +1047,6 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onMarkerDragEnd(Marker arg0) {
 		ShowAddObjectDialog(arg0);
-		// draggMarker = null;
 	}
 
 	@Override
