@@ -3,7 +3,6 @@
 
     <string name="app_name">Licz na zieleń</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="signin_quit">Zamykanie aplikacji</string>
     <string name="signin_really_quit">Czy zamknąć aplikacje?</string>
     <string name="yes">Tak</string>
@@ -55,6 +54,6 @@ Projekt “Licz na zieleń” współfinansowany przez Szwajcarię w ramach szwa
     <string name="no_signal">Twoj obszar nie jest obsługiwany przez aplikacje</string>
     <string name="wait_search">trwa wyszukiwanie...</string>
     <string name="hold_marker">Przytrzymaj marker w celu ustalenia dokładnej lokalizacji.</string>
-    <string name="title_activity_main2222">MainActivity</string>
+    
 
 </resources>
