@@ -5,7 +5,7 @@
     android:versionName="1.1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="9"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
-        android:name="it.katalpa.licz_na_zilelen.Application"
+        android:name="pl.org.sendzimir.licznazielen.Application"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -30,7 +30,7 @@
             android:value="AIzaSyAl03vSeIMfH9Mn8qR812txBUu-SfQuxrA" />
 
         <activity
-            android:name="it.katalpa.licz_na_zilelen.SplashActivity_"
+            android:name="pl.org.sendzimir.licznazielen.SplashActivity_"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="it.katalpa.licz_na_zilelen.MainActivity_"
+            android:name="pl.org.sendzimir.licznazielen.MainActivity_"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
