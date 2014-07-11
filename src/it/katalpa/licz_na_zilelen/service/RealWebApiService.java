@@ -35,19 +35,22 @@ import com.google.inject.Singleton;
 @Singleton
 public class RealWebApiService implements WebApiService {
 
+	double x1 = 15.6011163; 
+	double x2 = 18.259190;
+	double x3 = 20.0784373;
+	double x4 = 22.2100081;
+	double x5 = 19.2992967;
+	double x6 = 20.4326486;
+	double y1 = 52.873366; 
+	double y2 = 51.740552; 
+	double y3 = 49.6864208;
+
+	
+	
 	@Override
 	public String getPrefixByPosition(double lat, double lon)
 	{
 		
-		double x1 = 15.6011163;
-		double x2 = 18.2948956;
-		double x3 = 20.0784373;
-		double x4 = 22.2100081;
-		double x5 = 19.2992967;
-		double x6 = 20.4326486;
-		double y1 = 53.4758863;
-		double y2 = 50.8093207;
-		double y3 = 49.6864208;
 		if (lat < y3 || lat > y1)
             return "";
         if (lat > y2){
@@ -364,36 +367,36 @@ public class RealWebApiService implements WebApiService {
 	public double[] getRegion(String prefix) {
 		double[] reg= new double[4];
 		
-		if(prefix.equals("beta"))
+		if(prefix.equals("poznan"))
 		{
-			reg[0]=52.20529295087437;
-			reg[1]=52.621027546435755;
-			reg[2]=17.252853848040104;
-			reg[3]=16.78489051759243;
+			reg[0]=y2;
+			reg[1]=y1;
+			reg[2]=x2;
+			reg[3]=x1;
 		}
 		
 		if(prefix.equals("lodz"))
     	{
-			reg[0]=51.67198689093647;
-			reg[1]=51.838442515129685;
-			reg[2]=19.5498376339674;
-			reg[3]=19.36521414667368;	
+			reg[0]=y2;
+			reg[1]=y1;
+			reg[2]=x3;
+			reg[3]=x2;	
     	}
 		
 		if(prefix.equals("warszawa"))
     	{
-			reg[0]=52.00495333617714;
-			reg[1]=52.4020592632483;
-			reg[2]=21.23726561665535;
-			reg[3]=20.792383700609207;
+			reg[0]=y2;
+			reg[1]=y1;
+			reg[2]=x4;
+			reg[3]=x3;
     	}
 		
 		if(prefix.equals("krakow"))
     	{
-			reg[0]=49.97333361884823;
-			reg[1]=50.14771277578873;
-			reg[2]=20.045531652867794;
-			reg[3]=19.859035313129425;
+			reg[0]=y3;
+			reg[1]=y2;
+			reg[2]=x6;
+			reg[3]=x5;
     	}
 		
 		
