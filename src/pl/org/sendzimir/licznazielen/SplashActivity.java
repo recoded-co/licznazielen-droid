@@ -12,7 +12,9 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.inject.Inject;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Background;
@@ -61,6 +63,8 @@ public class SplashActivity extends Activity implements LocationListener {
 			System.out.println("else, there is location");
 			runInBackground(false, location);
 		}
+		int services = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+		Toast.makeText(getApplicationContext(), "Google Play Services Test:"+services, Toast.LENGTH_LONG);
 	}
 
 	@Override
