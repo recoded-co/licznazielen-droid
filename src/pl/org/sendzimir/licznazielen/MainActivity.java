@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.KeyEvent;
@@ -41,6 +43,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -118,61 +122,87 @@ public class MainActivity extends FragmentActivity implements
 			R.drawable.m6, R.drawable.m7, R.drawable.m8, R.drawable.m9,
 			R.drawable.m10 };
 
+	final int MGS_AFTERVIEW = 0x666;
+
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == MGS_AFTERVIEW) {
+				int connectionResult = GooglePlayServicesUtil
+						.isGooglePlayServicesAvailable(getApplicationContext());
+
+				if (connectionResult != ConnectionResult.SUCCESS) {
+					Toast.makeText(
+							getApplicationContext(),
+							"Wystąpił błąd Google Play Services, zainstaluj lub zaktualizuj usługę",
+							Toast.LENGTH_SHORT).show();
+				}
+
+			}
+		}
+	};
+
 	@AfterViews
 	void initApp() {
 
 		Intent it = this.getIntent();
-
 		map = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
-		map.setMyLocationEnabled(true);
 
-		map.setOnMarkerClickListener(this);
+		if (map == null) {
+			Message msg = handler.obtainMessage();
+			msg.what = MGS_AFTERVIEW;
+			handler.sendMessage(msg);
+		} else {
+			map.setMyLocationEnabled(true);
 
-		map.getUiSettings().setCompassEnabled(true);
-		map.getUiSettings().setZoomControlsEnabled(false);
+			map.setOnMarkerClickListener(this);
 
-		hasError = it.hasExtra("hasError");
-		apiPrefix = it.getStringExtra("prefix");
+			map.getUiSettings().setCompassEnabled(true);
+			map.getUiSettings().setZoomControlsEnabled(false);
 
-		myPosition = new LatLng(it.getDoubleExtra("Latitude", Double
-				.parseDouble(webApi.getSettings(getApplicationContext(),
-						"latitude", "52.2327277"))), it.getDoubleExtra(
-				"Longitude", Double.parseDouble(webApi.getSettings(
-						getApplicationContext(), "longitude", "21.0129143"))));
+			hasError = it.hasExtra("hasError");
+			apiPrefix = it.getStringExtra("prefix");
 
+			myPosition = new LatLng(it.getDoubleExtra("Latitude", Double
+					.parseDouble(webApi.getSettings(getApplicationContext(),
+							"latitude", "52.2327277"))),
+					it.getDoubleExtra("Longitude", Double.parseDouble(webApi
+							.getSettings(getApplicationContext(), "longitude",
+									"21.0129143"))));
 
-		CameraUpdate center = CameraUpdateFactory
-				.newCameraPosition(new CameraPosition(myPosition, 15, 0, 0));
-		map.moveCamera(center);
+			CameraUpdate center = CameraUpdateFactory
+					.newCameraPosition(new CameraPosition(myPosition, 15, 0, 0));
+			map.moveCamera(center);
 
-		System.out.println(map.getCameraPosition());
-		System.out.println(map.getCameraPosition().target.latitude);
-		System.out.println(map.getCameraPosition().target.longitude);
-		getNearObjects(map.getCameraPosition().target, map.getProjection()
-				.getVisibleRegion().latLngBounds, false);
+			System.out.println(map.getCameraPosition());
+			System.out.println(map.getCameraPosition().target.latitude);
+			System.out.println(map.getCameraPosition().target.longitude);
+			getNearObjects(map.getCameraPosition().target, map.getProjection()
+					.getVisibleRegion().latLngBounds, false);
 
-		map.setOnMarkerDragListener(this);
+			map.setOnMarkerDragListener(this);
 
-		isSatView = Boolean.parseBoolean(webApi.getSettings(
-				getApplicationContext(), "satelite", "false"));
-		isFavView = Boolean.parseBoolean(webApi.getSettings(
-				getApplicationContext(), "fav", "false"));
+			isSatView = Boolean.parseBoolean(webApi.getSettings(
+					getApplicationContext(), "satelite", "false"));
+			isFavView = Boolean.parseBoolean(webApi.getSettings(
+					getApplicationContext(), "fav", "false"));
 
-		if (isSatView)
-			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+			if (isSatView)
+				map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
-		apiPrefix = webApi.getPrefixByPosition(myPosition.latitude,
-				myPosition.longitude);
+			apiPrefix = webApi.getPrefixByPosition(myPosition.latitude,
+					myPosition.longitude);
 
-		if (apiPrefix.isEmpty()) {
-			buttonSearch.setEnabled(false);
-			nearButton.setEnabled(false);
-			addButton.setEnabled(false);
+			if (apiPrefix.isEmpty()) {
+				buttonSearch.setEnabled(false);
+				nearButton.setEnabled(false);
+				addButton.setEnabled(false);
 
-			for (int i = 0; i < 2; i++)
-				ShowFlashMessage(0, getApplicationContext().getResources()
-						.getString(R.string.no_signal));
+				for (int i = 0; i < 2; i++)
+					ShowFlashMessage(0, getApplicationContext().getResources()
+							.getString(R.string.no_signal));
+			}
 		}
 	}
 
@@ -359,15 +389,15 @@ public class MainActivity extends FragmentActivity implements
 
 		LatLng position = new LatLng(lat, lon);
 
-		map.addMarker(new MarkerOptions().position(position)
-				.draggable(true).alpha(1.0f).flat(true)
+		map.addMarker(new MarkerOptions().position(position).draggable(true)
+				.alpha(1.0f).flat(true)
 				.icon(BitmapDescriptorFactory.fromResource(markersColor[0])));
 	}
 
 	@UiThread
 	public void refreshMap(int iCount) {
 
-		List<PleaceObject> copy = new ArrayList<PleaceObject>(nearObjects); 
+		List<PleaceObject> copy = new ArrayList<PleaceObject>(nearObjects);
 		Collections.sort(copy, new Comparator<PleaceObject>() {
 
 			@Override
@@ -389,7 +419,8 @@ public class MainActivity extends FragmentActivity implements
 	void ShowObjectDialog(final PleaceObject obj) {
 		LatLng position = new LatLng(obj.getLatitude(), obj.getLongitude());
 		CameraUpdate center = CameraUpdateFactory
-				.newCameraPosition(new CameraPosition(position, fZoomLevel, 0, 0));
+				.newCameraPosition(new CameraPosition(position, fZoomLevel, 0,
+						0));
 		map.moveCamera(center);
 
 		VisibleRegion visibleRegion = map.getProjection().getVisibleRegion();
@@ -790,13 +821,13 @@ public class MainActivity extends FragmentActivity implements
 		Geocoder geoCoder = new Geocoder(MainActivity.this, Locale.getDefault());
 		try {
 			List<Address> addresses;
-			
+
 			addresses = geoCoder.getFromLocationName(
 					((EditText) mNearDialogView
 							.findViewById(R.id.textEditDialog)).getText()
 							.toString()
 							+ "," + textLocation + " Polska", 1);
-			
+
 			if (addresses != null && addresses.size() > 0) {
 				LatLng latlon = new LatLng(addresses.get(0).getLatitude(),
 						addresses.get(0).getLongitude());
